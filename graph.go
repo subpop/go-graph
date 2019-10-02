@@ -11,6 +11,17 @@ func (e *MissingVertexErr) Error() string {
 	return "err: missing vertex: " + e.v.id.String()
 }
 
+// A MissingEdgeErr describes an edge (a pair of ordered vertices) that does
+// not exist in a Graph.
+type MissingEdgeErr struct {
+	from Vertex
+	to   Vertex
+}
+
+func (e *MissingEdgeErr) Error() string {
+	return "err: missing edge (" + e.from.id.String() + " -> " + e.to.id.String() + ")"
+}
+
 // A DuplicateVertexErr describes a vertex that already exists in a Graph.
 type DuplicateVertexErr struct {
 	v Vertex
@@ -92,6 +103,43 @@ func (g *Graph) addEdge(a, b *Vertex) error {
 		return &DuplicateEdgeErr{*a, *b}
 	}
 	neighbors[b.id] = b
+	g.adjacencyMap[a.id] = neighbors
+
+	return nil
+}
+
+// RemoveEdge removes an edge from a to b. If a or be are not in the Graph,
+// it returns MissingVertexErr. If the Graph is an undirected graph, the inverse
+// edge from b to a is also removed. If the edge does not exist, it returns
+// MissingEdgeErr.
+func (g *Graph) RemoveEdge(a, b *Vertex) error {
+	if _, ok := g.vertices[a.id]; !ok {
+		return &MissingVertexErr{*a}
+	}
+
+	if _, ok := g.vertices[b.id]; !ok {
+		return &MissingVertexErr{*b}
+	}
+
+	if err := g.removeEdge(a, b); err != nil {
+		return err
+	}
+
+	if !g.isDirected {
+		if err := g.removeEdge(b, a); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (g *Graph) removeEdge(a, b *Vertex) error {
+	neighbors, ok := g.adjacencyMap[a.id]
+	if !ok {
+		return &MissingEdgeErr{*a, *b}
+	}
+	delete(neighbors, b.id)
 	g.adjacencyMap[a.id] = neighbors
 
 	return nil

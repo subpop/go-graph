@@ -41,6 +41,46 @@ func TestAddEdge(t *testing.T) {
 	}
 }
 
+func TestRemoveEdge(t *testing.T) {
+	g := NewGraph(false)
+
+	a := NewVertex(nil)
+	b := NewVertex(nil)
+
+	if err := g.AddVertex(a); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.AddVertex(b); err != nil {
+		t.Fatal(err)
+	}
+	if err := g.AddEdge(&a, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	var neighbors []*Vertex
+	var err error
+
+	neighbors, err = g.Neighbors(&a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(neighbors, []*Vertex{&b}) {
+		t.Fatalf("%v != %v", neighbors, []*Vertex{&b})
+	}
+
+	if err := g.RemoveEdge(&a, &b); err != nil {
+		t.Fatal(err)
+	}
+
+	neighbors, err = g.Neighbors(&a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(neighbors, []*Vertex{}) {
+		t.Fatalf("%v != %v", neighbors, []*Vertex{})
+	}
+}
+
 func TestNeighbors(t *testing.T) {
 	g := NewGraph(false)
 
