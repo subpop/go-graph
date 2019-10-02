@@ -24,7 +24,7 @@ type MissingEdgeErr struct {
 }
 
 func (e *MissingEdgeErr) Error() string {
-	return "err: missing edge (" + reflect.ValueOf(e.from).String() + " -> " + reflect.ValueOf(e.to).String() + ")"
+	return "err: missing edge (" + reflect.ValueOf(e.from).String() + " - " + reflect.ValueOf(e.to).String() + ")"
 }
 
 // A DuplicateVertexErr describes a vertex that already exists in a Graph.
@@ -43,7 +43,7 @@ type DuplicateEdgeErr struct {
 }
 
 func (e *DuplicateEdgeErr) Error() string {
-	return "err: duplicate edge (" + reflect.ValueOf(e.from).String() + " -> " + reflect.ValueOf(e.to).String() + ")"
+	return "err: duplicate edge (" + reflect.ValueOf(e.from).String() + " - " + reflect.ValueOf(e.to).String() + ")"
 }
 
 // A Graph is an unordered set of nodes along with a set of weighted ordered-pair
