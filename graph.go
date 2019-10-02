@@ -76,6 +76,24 @@ func (g *Graph) AddVertex(v interface{}) error {
 	return nil
 }
 
+// RemoveVertex removes v from g. If the graph does not contain vertex v, it
+// returns MissingVertexErr.
+func (g *Graph) RemoveVertex(v interface{}) error {
+	if _, ok := g.vertices[v]; !ok {
+		return &MissingVertexErr{v}
+	}
+
+	for n := range g.adjacencyMap[v] {
+		delete(g.adjacencyMap[n], v)
+	}
+
+	delete(g.adjacencyMap, v)
+
+	delete(g.vertices, v)
+
+	return nil
+}
+
 // AddEdge creates a weighted edge from a to b. It adds a and b to the graph if
 // they are not already present. If the graph is an undirected graph, the inverse
 // edge from b to a is also added. If the edge relationship already exists, a

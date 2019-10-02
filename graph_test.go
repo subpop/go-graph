@@ -43,6 +43,60 @@ func TestAddVertex(t *testing.T) {
 		}
 	}
 }
+
+func TestRemoveVertex(t *testing.T) {
+	tests := []struct {
+		graph       Graph
+		input       string
+		want        Graph
+		shouldError bool
+		wantError   error
+	}{
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+					},
+				},
+			},
+			input: "a",
+			want: Graph{
+				vertices: set{
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"b": edgeMap{},
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		err := test.graph.RemoveVertex(test.input)
+
+		if test.shouldError {
+			if !reflect.DeepEqual(err, test.wantError) {
+				t.Errorf("%v != %v", err, test.wantError)
+			}
+		} else {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(test.graph, test.want) {
+				t.Errorf("%+v != %+v", test.graph, test.want)
+			}
+		}
+	}
+}
+
 func TestAddEdge(t *testing.T) {
 	tests := []struct {
 		input       struct{ a, b string }
@@ -205,7 +259,7 @@ func TestNeighbors(t *testing.T) {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v != %v", got, test.want)
+				t.Errorf("%+v != %+v", got, test.want)
 			}
 		}
 	}
