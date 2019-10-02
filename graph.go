@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -61,6 +62,17 @@ func NewGraph(isDirected bool) Graph {
 		vertices:     make(set),
 		adjacencyMap: make(adjacencyMap),
 	}
+}
+
+func (g Graph) String() string {
+	out := ""
+	for a, e := range g.adjacencyMap {
+		for b := range e {
+			out += fmt.Sprintf("(%v, %v)", a, b)
+		}
+		out += " "
+	}
+	return out
 }
 
 // AddVertex adds v to g. If the graph already contains vertex v, it returns
