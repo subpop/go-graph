@@ -32,7 +32,6 @@ func TestAddVertex(t *testing.T) {
 				adjacencyMap: make(adjacencyMap),
 			},
 			input:     "a",
-			want:      Graph{},
 			wantError: &DuplicateVertexErr{"a"},
 		},
 	}
@@ -169,7 +168,6 @@ func TestAddEdge(t *testing.T) {
 				},
 			},
 			input:     struct{ a, b string }{"a", "b"},
-			want:      Graph{},
 			wantError: &DuplicateEdgeErr{"a", "b"},
 		},
 	}
@@ -258,7 +256,6 @@ func TestRemoveEdge(t *testing.T) {
 				},
 			},
 			input:     struct{ a, b string }{"d", "b"},
-			want:      Graph{},
 			wantError: &MissingVertexErr{"d"},
 		},
 		{
@@ -282,7 +279,6 @@ func TestRemoveEdge(t *testing.T) {
 				},
 			},
 			input:     struct{ a, b string }{"b", "d"},
-			want:      Graph{},
 			wantError: &MissingVertexErr{"d"},
 		},
 		{
@@ -306,7 +302,6 @@ func TestRemoveEdge(t *testing.T) {
 				},
 			},
 			input:     struct{ a, b string }{"a", "c"},
-			want:      Graph{},
 			wantError: &MissingEdgeErr{"a", "c"},
 		},
 	}
