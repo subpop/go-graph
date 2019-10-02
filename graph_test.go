@@ -331,11 +331,10 @@ func TestRemoveEdge(t *testing.T) {
 
 func TestNeighbors(t *testing.T) {
 	tests := []struct {
-		graph       Graph
-		input       string
-		want        []interface{}
-		shouldError bool
-		wantError   error
+		graph     Graph
+		input     string
+		want      []interface{}
+		wantError error
 	}{
 		{
 			graph: Graph{
@@ -360,12 +359,24 @@ func TestNeighbors(t *testing.T) {
 			input: "b",
 			want:  []interface{}{"a", "c"},
 		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{},
+				},
+			},
+			input:     "b",
+			wantError: &MissingVertexErr{"b"},
+		},
 	}
 
 	for _, test := range tests {
 		got, err := test.graph.Neighbors(test.input)
 
-		if test.shouldError {
+		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
 				t.Errorf("%v != %v", err, test.wantError)
 			}
