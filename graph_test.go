@@ -7,29 +7,40 @@ import (
 
 func TestAddVertex(t *testing.T) {
 	tests := []struct {
-		input       string
-		want        Graph
-		shouldError bool
-		wantError   error
+		graph     Graph
+		input     string
+		want      Graph
+		wantError error
 	}{
 		{
-			input: "42",
+			graph: NewGraph(false),
+			input: "a",
 			want: Graph{
 				vertices: set{
-					"42": true,
+					"a": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"42": edgeMap{},
+					"a": edgeMap{},
 				},
 			},
+		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+				},
+				adjacencyMap: make(adjacencyMap),
+			},
+			input:     "a",
+			want:      Graph{},
+			wantError: &DuplicateVertexErr{"a"},
 		},
 	}
 
 	for _, test := range tests {
-		got := NewGraph(false)
-		err := got.AddVertex(test.input)
+		err := test.graph.AddVertex(test.input)
 
-		if test.shouldError {
+		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
 				t.Errorf("%v != %v", err, test.wantError)
 			}
@@ -37,8 +48,8 @@ func TestAddVertex(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%+v != %+v", got, test.want)
+			if !reflect.DeepEqual(test.graph, test.want) {
+				t.Errorf("%+v != %+v", test.graph, test.want)
 			}
 		}
 	}
