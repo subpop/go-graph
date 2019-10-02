@@ -57,11 +57,10 @@ func TestAddVertex(t *testing.T) {
 
 func TestRemoveVertex(t *testing.T) {
 	tests := []struct {
-		graph       Graph
-		input       string
-		want        Graph
-		shouldError bool
-		wantError   error
+		graph     Graph
+		input     string
+		want      Graph
+		wantError error
 	}{
 		{
 			graph: Graph{
@@ -88,12 +87,24 @@ func TestRemoveVertex(t *testing.T) {
 				},
 			},
 		},
+		{
+			graph: Graph{
+				vertices: set{
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"b": edgeMap{},
+				},
+			},
+			input:     "a",
+			wantError: &MissingVertexErr{"a"},
+		},
 	}
 
 	for _, test := range tests {
 		err := test.graph.RemoveVertex(test.input)
 
-		if test.shouldError {
+		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
 				t.Errorf("%v != %v", err, test.wantError)
 			}
