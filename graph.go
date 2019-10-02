@@ -76,6 +76,18 @@ func (g *Graph) AddVertex(v interface{}) error {
 	return nil
 }
 
+// AddVertices adds vertices v to g. If the graph already contains a vertex, it
+// returns DuplicateVertexErr.
+func (g *Graph) AddVertices(v ...interface{}) error {
+	for _, vertex := range v {
+		if err := g.AddVertex(vertex); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // RemoveVertex removes v from g. If the graph does not contain vertex v, it
 // returns MissingVertexErr.
 func (g *Graph) RemoveVertex(v interface{}) error {

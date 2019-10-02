@@ -118,6 +118,59 @@ func TestRemoveVertex(t *testing.T) {
 	}
 }
 
+func TestAddVertices(t *testing.T) {
+	tests := []struct {
+		graph     Graph
+		input     []interface{}
+		want      Graph
+		wantError error
+	}{
+		{
+			graph: NewGraph(false),
+			input: []interface{}{"a", "b"},
+			want: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{},
+					"b": edgeMap{},
+				},
+			},
+		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{},
+				},
+			},
+			input:     []interface{}{"a"},
+			wantError: &DuplicateVertexErr{"a"},
+		},
+	}
+
+	for _, test := range tests {
+		err := test.graph.AddVertices(test.input...)
+
+		if test.wantError != nil {
+			if !reflect.DeepEqual(err, test.wantError) {
+				t.Errorf("%v != %v", err, test.wantError)
+			}
+		} else {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(test.graph, test.want) {
+				t.Errorf("%+v != %+v", test.graph, test.want)
+			}
+		}
+	}
+}
+
 func TestAddEdge(t *testing.T) {
 	tests := []struct {
 		graph     Graph
