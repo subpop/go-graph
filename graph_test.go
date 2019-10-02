@@ -6,110 +6,207 @@ import (
 )
 
 func TestAddVertex(t *testing.T) {
-	g := NewGraph(false)
+	tests := []struct {
+		input       string
+		want        Graph
+		shouldError bool
+		wantError   error
+	}{
+		{
+			input: "42",
+			want: Graph{
+				vertices: set{
+					"42": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"42": edgeMap{},
+				},
+			},
+		},
+	}
 
-	for i := 0; i < 3; i++ {
-		v := NewVertex(nil)
-		if err := g.AddVertex(v); err != nil {
-			t.Fatal(err)
+	for _, test := range tests {
+		got := NewGraph(false)
+		err := got.AddVertex(test.input)
+
+		if test.shouldError {
+			if !reflect.DeepEqual(err, test.wantError) {
+				t.Errorf("%v != %v", err, test.wantError)
+			}
+		} else {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, test.want) {
+				t.Errorf("%+v != %+v", got, test.want)
+			}
 		}
 	}
-
-	if g.NumVertex() != 3 {
-		t.Fatalf("%v != 3", g.NumVertex())
-	}
 }
-
 func TestAddEdge(t *testing.T) {
-	g := NewGraph(false)
-
-	a := NewVertex(nil)
-	b := NewVertex(nil)
-
-	if err := g.AddVertex(a); err != nil {
-		t.Fatal(err)
+	tests := []struct {
+		input       struct{ a, b string }
+		want        Graph
+		shouldError bool
+		wantError   error
+	}{
+		{
+			input: struct{ a, b string }{"a", "b"},
+			want: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+					},
+				},
+			},
+		},
 	}
-	if err := g.AddVertex(b); err != nil {
-		t.Fatal(err)
-	}
-	if err := g.AddEdge(&a, &b); err != nil {
-		t.Fatal(err)
-	}
 
-	if g.NumVertex() != 2 {
-		t.Fatalf("%v != 2", g.NumVertex())
+	for _, test := range tests {
+		got := NewGraph(false)
+		if err := got.AddVertex(test.input.a); err != nil {
+			t.Fatal(err)
+		}
+		if err := got.AddVertex(test.input.b); err != nil {
+			t.Fatal(err)
+		}
+		err := got.AddEdge(test.input.a, test.input.b, 0)
+
+		if test.shouldError {
+			if !reflect.DeepEqual(err, test.wantError) {
+				t.Errorf("%v != %v", err, test.wantError)
+			}
+		} else {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, test.want) {
+				t.Errorf("%+v != %+v", got, test.want)
+			}
+		}
 	}
 }
 
 func TestRemoveEdge(t *testing.T) {
-	g := NewGraph(false)
+	tests := []struct {
+		graph       Graph
+		input       struct{ a, b string }
+		want        Graph
+		shouldError bool
+		wantError   error
+	}{
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+					"c": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+						"c": 0,
+					},
+					"c": edgeMap{
+						"b": 0,
+					},
+				},
+			},
+			input: struct{ a, b string }{"a", "b"},
+			want: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+					"c": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{},
+					"b": edgeMap{
+						"c": 0,
+					},
+					"c": edgeMap{
+						"b": 0,
+					},
+				},
+			},
+		},
+	}
 
-	a := NewVertex(nil)
-	b := NewVertex(nil)
+	for _, test := range tests {
+		err := test.graph.RemoveEdge(test.input.a, test.input.b)
 
-	if err := g.AddVertex(a); err != nil {
-		t.Fatal(err)
-	}
-	if err := g.AddVertex(b); err != nil {
-		t.Fatal(err)
-	}
-	if err := g.AddEdge(&a, &b); err != nil {
-		t.Fatal(err)
-	}
-
-	var neighbors []*Vertex
-	var err error
-
-	neighbors, err = g.Neighbors(&a)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !reflect.DeepEqual(neighbors, []*Vertex{&b}) {
-		t.Fatalf("%v != %v", neighbors, []*Vertex{&b})
-	}
-
-	if err := g.RemoveEdge(&a, &b); err != nil {
-		t.Fatal(err)
-	}
-
-	neighbors, err = g.Neighbors(&a)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !reflect.DeepEqual(neighbors, []*Vertex{}) {
-		t.Fatalf("%v != %v", neighbors, []*Vertex{})
+		if test.shouldError {
+			if !reflect.DeepEqual(err, test.wantError) {
+				t.Errorf("%v != %v", err, test.wantError)
+			}
+		} else {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(test.graph, test.want) {
+				t.Errorf("%+v != %+v", test.graph, test.want)
+			}
+		}
 	}
 }
 
 func TestNeighbors(t *testing.T) {
-	g := NewGraph(false)
+	tests := []struct {
+		graph       Graph
+		input       string
+		want        []interface{}
+		shouldError bool
+		wantError   error
+	}{
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+					"c": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+						"c": 0,
+					},
+					"c": edgeMap{
+						"b": 0,
+					},
+				},
+			},
+			input: "b",
+			want:  []interface{}{"a", "c"},
+		},
+	}
 
-	a := NewVertex(nil)
-	b := NewVertex(nil)
+	for _, test := range tests {
+		got, err := test.graph.Neighbors(test.input)
 
-	if err := g.AddVertex(a); err != nil {
-		t.Fatal(err)
-	}
-	if err := g.AddVertex(b); err != nil {
-		t.Fatal(err)
-	}
-	if err := g.AddEdge(&a, &b); err != nil {
-		t.Fatal(err)
-	}
-
-	if g.NumVertex() != 2 {
-		t.Fatalf("%v != 2", g.NumVertex())
-	}
-
-	neighbors, err := g.Neighbors(&a)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if len(neighbors) != 1 {
-		t.Fatalf("%v != 1", len(neighbors))
-	}
-	if !reflect.DeepEqual(*neighbors[0], b) {
-		t.Fatalf("%+v != %+v", *neighbors[0], b)
+		if test.shouldError {
+			if !reflect.DeepEqual(err, test.wantError) {
+				t.Errorf("%v != %v", err, test.wantError)
+			}
+		} else {
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(got, test.want) {
+				t.Errorf("%v != %v", got, test.want)
+			}
+		}
 	}
 }
