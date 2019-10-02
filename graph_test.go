@@ -194,11 +194,10 @@ func TestAddEdge(t *testing.T) {
 
 func TestRemoveEdge(t *testing.T) {
 	tests := []struct {
-		graph       Graph
-		input       struct{ a, b string }
-		want        Graph
-		shouldError bool
-		wantError   error
+		graph     Graph
+		input     struct{ a, b string }
+		want      Graph
+		wantError error
 	}{
 		{
 			graph: Graph{
@@ -238,12 +237,84 @@ func TestRemoveEdge(t *testing.T) {
 				},
 			},
 		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+					"c": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+						"c": 0,
+					},
+					"c": edgeMap{
+						"b": 0,
+					},
+				},
+			},
+			input:     struct{ a, b string }{"d", "b"},
+			want:      Graph{},
+			wantError: &MissingVertexErr{"d"},
+		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+					"c": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+						"c": 0,
+					},
+					"c": edgeMap{
+						"b": 0,
+					},
+				},
+			},
+			input:     struct{ a, b string }{"b", "d"},
+			want:      Graph{},
+			wantError: &MissingVertexErr{"d"},
+		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+					"c": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+						"c": 0,
+					},
+					"c": edgeMap{
+						"b": 0,
+					},
+				},
+			},
+			input:     struct{ a, b string }{"a", "c"},
+			want:      Graph{},
+			wantError: &MissingEdgeErr{"a", "c"},
+		},
 	}
 
 	for _, test := range tests {
 		err := test.graph.RemoveEdge(test.input.a, test.input.b)
 
-		if test.shouldError {
+		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
 				t.Errorf("%v != %v", err, test.wantError)
 			}

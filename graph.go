@@ -162,8 +162,8 @@ func (g *Graph) RemoveEdge(a, b interface{}) error {
 }
 
 func (g *Graph) removeEdge(a, b interface{}) error {
-	neighbors, ok := g.adjacencyMap[a]
-	if !ok {
+	neighbors := g.adjacencyMap[a]
+	if _, ok := neighbors[b]; !ok {
 		return &MissingEdgeErr{a, b}
 	}
 	delete(neighbors, b)
