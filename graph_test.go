@@ -121,12 +121,22 @@ func TestRemoveVertex(t *testing.T) {
 
 func TestAddEdge(t *testing.T) {
 	tests := []struct {
-		input       struct{ a, b string }
-		want        Graph
-		shouldError bool
-		wantError   error
+		graph     Graph
+		input     struct{ a, b string }
+		want      Graph
+		wantError error
 	}{
 		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{},
+					"b": edgeMap{},
+				},
+			},
 			input: struct{ a, b string }{"a", "b"},
 			want: Graph{
 				vertices: set{
@@ -143,19 +153,31 @@ func TestAddEdge(t *testing.T) {
 				},
 			},
 		},
+		{
+			graph: Graph{
+				vertices: set{
+					"a": true,
+					"b": true,
+				},
+				adjacencyMap: adjacencyMap{
+					"a": edgeMap{
+						"b": 0,
+					},
+					"b": edgeMap{
+						"a": 0,
+					},
+				},
+			},
+			input:     struct{ a, b string }{"a", "b"},
+			want:      Graph{},
+			wantError: &DuplicateEdgeErr{"a", "b"},
+		},
 	}
 
 	for _, test := range tests {
-		got := NewGraph(false)
-		if err := got.AddVertex(test.input.a); err != nil {
-			t.Fatal(err)
-		}
-		if err := got.AddVertex(test.input.b); err != nil {
-			t.Fatal(err)
-		}
-		err := got.AddEdge(test.input.a, test.input.b, 0)
+		err := test.graph.AddEdge(test.input.a, test.input.b, 0)
 
-		if test.shouldError {
+		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
 				t.Errorf("%v != %v", err, test.wantError)
 			}
@@ -163,8 +185,8 @@ func TestAddEdge(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%+v != %+v", got, test.want)
+			if !reflect.DeepEqual(test.graph, test.want) {
+				t.Errorf("%+v != %+v", test.graph, test.want)
 			}
 		}
 	}
