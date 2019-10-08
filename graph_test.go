@@ -3,6 +3,9 @@ package graph
 import (
 	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestAddVertex(t *testing.T) {
@@ -432,7 +435,7 @@ func TestNeighbors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
+			if !cmp.Equal(got, test.want, cmp.Options{cmpopts.SortSlices(func(a, b string) bool { return a > b })}) {
 				t.Errorf("%+v != %+v", got, test.want)
 			}
 		}
