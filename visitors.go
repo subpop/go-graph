@@ -1,7 +1,8 @@
 package graph
 
-// DepthFirstSearch performs a depth-first search of the graph, starting with
-// vertex v. It returns a slice of vertices reachable by v in lexicographic order.
+// DepthFirstSearch performs a depth-first traversal of the graph, starting with
+// vertex v. It returns a slice of vertices visited during the traversal in
+// lexicographic order.
 func (g *Graph) DepthFirstSearch(v interface{}) ([]interface{}, error) {
 	if _, ok := g.vertices[v]; !ok {
 		return nil, &MissingVertexErr{v}
@@ -39,7 +40,7 @@ func (g *Graph) visit(v interface{}, visited map[interface{}]bool, visitorFunc f
 }
 
 // BreadthFirstSearch performs a breadth-first traversal of the graph, starting
-// with vertex v. It returns a slice of vertices reachable by v.
+// with vertex v. It returns a slice of vertices visited during the traversal.
 func (g *Graph) BreadthFirstSearch(v interface{}) ([]interface{}, error) {
 	if _, ok := g.vertices[v]; !ok {
 		return nil, &MissingVertexErr{v}
