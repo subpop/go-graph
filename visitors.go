@@ -1,7 +1,7 @@
 package graph
 
 // DepthFirstSearch performs a depth-first search of the graph, starting with
-// vertex v. It returns a slice of vertices reachable by v in lexigraphic order.
+// vertex v. It returns a slice of vertices reachable by v in lexicographic order.
 func (g *Graph) DepthFirstSearch(v interface{}) ([]interface{}, error) {
 	if _, ok := g.vertices[v]; !ok {
 		return nil, &MissingVertexErr{v}
