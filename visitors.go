@@ -1,5 +1,9 @@
 package graph
 
+import (
+	"github.com/subpop/go-adt"
+)
+
 // DepthFirstSearch performs a depth-first traversal of the graph, starting with
 // vertex v. It returns a slice of vertices visited during the traversal in
 // lexicographic order.
@@ -59,18 +63,18 @@ func (g *Graph) BreadthFirstVisit(v interface{}, visitorFunc func(v interface{})
 	if _, ok := g.vertices[v]; !ok {
 		return &MissingVertexErr{v}
 	}
-	var q queue
+	var q adt.Queue
 	visited := make(map[interface{}]bool)
 	visited[v] = true
-	q.enqueue(v)
-	for v := q.dequeue(); v != nil; v = q.dequeue() {
+	q.Enqueue(v)
+	for v := q.Dequeue(); v != nil; v = q.Dequeue() {
 		if stop := visitorFunc(v); stop {
 			return nil
 		}
 		for n := range g.adjacencyMap[v] {
 			if _, ok := visited[n]; !ok {
 				visited[n] = true
-				q.enqueue(n)
+				q.Enqueue(n)
 			}
 		}
 	}
