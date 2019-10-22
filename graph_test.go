@@ -435,7 +435,7 @@ func TestNeighbors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !cmp.Equal(got, test.want, cmp.Options{cmpopts.SortSlices(func(a, b string) bool { return a > b })}) {
+			if !cmp.Equal(got, test.want, cmp.Options{cmpopts.SortSlices(func(a, b string) bool { return a < b })}) {
 				t.Errorf("%+v != %+v", got, test.want)
 			}
 		}
