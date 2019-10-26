@@ -27,7 +27,7 @@ func (e *UndirectedGraphErr) Error() string {
 // TopologicalSort performs a variation on a depth-first search to order a
 // directed acyclic graph's vertices in such a way that for every vertex, all
 // adjacent vertices appear before it in the list. If graph is undirected, an
-// error is returned.
+// error is returned. If a cycle is detected, an error is returned.
 func (g *Graph) TopologicalSort() ([]interface{}, error) {
 	if !g.isDirected {
 		return nil, &UndirectedGraphErr{g: g}
