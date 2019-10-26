@@ -13,34 +13,28 @@ func TestTopologicalSort(t *testing.T) {
 	}{
 		{
 			input: Graph{
+				isDirected: true,
 				vertices: set{
 					0: true,
 					1: true,
 					2: true,
 					3: true,
-					4: true,
-					5: true,
 				},
 				adjacencyMap: adjacencyMap{
 					0: edgeMap{},
-					1: edgeMap{},
+					1: edgeMap{
+						0: 0,
+					},
 					2: edgeMap{
-						3: 0,
+						1: 0,
 					},
 					3: edgeMap{
-						1: 0,
-					},
-					4: edgeMap{
-						0: 0,
-						1: 0,
-					},
-					5: edgeMap{
 						2: 0,
-						0: 0,
+						1: 0,
 					},
 				},
 			},
-			want: []interface{}{5, 4, 2, 3, 1, 0},
+			want: []interface{}{3, 2, 1, 0},
 		},
 	}
 
