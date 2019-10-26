@@ -36,6 +36,21 @@ func TestTopologicalSort(t *testing.T) {
 			},
 			want: []interface{}{3, 2, 1, 0},
 		},
+		{
+			input: Graph{
+				isDirected:   false,
+				vertices:     set{},
+				adjacencyMap: adjacencyMap{},
+			},
+			want: nil,
+			wantError: &UndirectedGraphErr{
+				g: &Graph{
+					isDirected:   false,
+					vertices:     set{},
+					adjacencyMap: adjacencyMap{},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
