@@ -6,6 +6,14 @@ import (
 	"github.com/subpop/go-adt"
 )
 
+// A CycleDetectedErr describes a graph that contains a cycle.
+type CycleDetectedErr struct {
+	g *Graph
+}
+
+func (e *CycleDetectedErr) Error() string {
+	return fmt.Sprintf("err: cycle detected in graph: %v", e.g)
+}
 
 // An UndirectedGraphErr describes a graph that is undirected.
 type UndirectedGraphErr struct {
@@ -30,8 +38,13 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 	visited := make(map[interface{}]bool)
 
 	for v := range g.vertices {
+		if visited[v] == true {
+			return nil, &CycleDetectedErr{g: g}
+		}
 		if _, ok := visited[v]; !ok {
-			g.topologicalSort(v, visited, &stack)
+			if err := g.topologicalSort(v, visited, &stack); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -46,13 +59,20 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 	return sorted, nil
 }
 
-func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, stack *adt.Stack) {
+func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, stack *adt.Stack) error {
+	if visited[v] == true {
+		return &CycleDetectedErr{g: g}
+	}
 	visited[v] = true
 
 	for n := range g.adjacencyMap[v] {
 		if _, ok := visited[n]; !ok {
-			g.topologicalSort(n, visited, stack)
+			if err := g.topologicalSort(n, visited, stack); err != nil {
+				return err
+			}
 		}
 	}
 	stack.Push(v)
+
+	return nil
 }

@@ -51,6 +51,49 @@ func TestTopologicalSort(t *testing.T) {
 				},
 			},
 		},
+		{
+			input: Graph{
+				isDirected: true,
+				vertices: set{
+					0: true,
+					1: true,
+					2: true,
+				},
+				adjacencyMap: adjacencyMap{
+					0: edgeMap{
+						1: 0,
+					},
+					1: edgeMap{
+						2: 0,
+					},
+					2: edgeMap{
+						0: 0,
+					},
+				},
+			},
+			want: nil,
+			wantError: &CycleDetectedErr{
+				g: &Graph{
+					isDirected: true,
+					vertices: set{
+						0: true,
+						1: true,
+						2: true,
+					},
+					adjacencyMap: adjacencyMap{
+						0: edgeMap{
+							1: 0,
+						},
+						1: edgeMap{
+							2: 0,
+						},
+						2: edgeMap{
+							0: 0,
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
