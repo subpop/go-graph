@@ -65,14 +65,13 @@ func NewGraph(isDirected bool) Graph {
 }
 
 func (g Graph) String() string {
-	out := ""
+	out := "{ "
 	for a, e := range g.adjacencyMap {
 		for b := range e {
-			out += fmt.Sprintf("(%v, %v)", a, b)
+			out += fmt.Sprintf("(%v, %v) ", a, b)
 		}
-		out += " "
 	}
-	return out
+	return out + "}"
 }
 
 // AddVertex adds v to g. If the graph already contains vertex v, it returns

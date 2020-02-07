@@ -38,5 +38,5 @@ func ExampleGraph() {
 
 	fmt.Println(deps)
 	//Output:
-	// (foo-1.4.2-1, libfoo-1.5-2)
+	// { (foo-1.4.2-1, libfoo-1.5-2) }
 }
