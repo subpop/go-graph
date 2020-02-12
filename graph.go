@@ -161,10 +161,12 @@ func (g *Graph) AddEdge(a, b interface{}, weight float64) error {
 	}
 
 	if g.isDirected {
+		// In a directed graph, adding an edge from a to b adds an Implicit edge from b to a.
 		if err := g.addImplicitEdge(b, a, weight); err != nil {
 			return err
 		}
 	} else {
+		// In an undirected graph, adding an edge from a to b adds an Explicit edge from b to a.
 		if err := g.addExplicitEdge(b, a, weight); err != nil {
 			return err
 		}
@@ -262,6 +264,12 @@ func (g Graph) Neighbors(v interface{}, d Direction) ([]interface{}, error) {
 
 	var neighbors edgeMap
 	if g.isDirected {
+		// In a directed graph, the neighbors of a vertex v are the set of
+		// vertices:
+		// - to which v has an explicit edge if direction d is outbound.
+		// - to which v has an implicit edge if direction d is inbound.
+		// - to which v has an explicit or implicit edge if direction d is
+		//   unqualified.
 		switch d {
 		case Outbound:
 			neighbors = g.adjacencyMap[v].Explicit
@@ -274,6 +282,8 @@ func (g Graph) Neighbors(v interface{}, d Direction) ([]interface{}, error) {
 			}
 		}
 	} else {
+		// In an undirected graph, the neighbors of a vertex v are the set of
+		// vertices to which v has an explicit edge.
 		neighbors = g.adjacencyMap[v].Explicit
 	}
 
