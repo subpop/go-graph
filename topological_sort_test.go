@@ -23,19 +23,26 @@ func TestTopologicalSort(t *testing.T) {
 				adjacencyMap: adjacencyMap{
 					0: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+						Implicit: edgeMap{
+							1: 0,
+						},
 					},
 					1: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
 							0: 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap{
+							2: 0,
+							3: 0,
+						},
 					},
 					2: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
 							1: 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap{
+							3: 0,
+						},
 					},
 					3: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
@@ -76,19 +83,25 @@ func TestTopologicalSort(t *testing.T) {
 						Explicit: edgeMap{
 							1: 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap{
+							2: 0,
+						},
 					},
 					1: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
 							2: 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap{
+							0: 0,
+						},
 					},
 					2: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
 							0: 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap{
+							1: 0,
+						},
 					},
 				},
 			},
@@ -106,19 +119,25 @@ func TestTopologicalSort(t *testing.T) {
 							Explicit: edgeMap{
 								1: 0,
 							},
-							Implicit: edgeMap{},
+							Implicit: edgeMap{
+								2: 0,
+							},
 						},
 						1: struct{ Explicit, Implicit edgeMap }{
 							Explicit: edgeMap{
 								2: 0,
 							},
-							Implicit: edgeMap{},
+							Implicit: edgeMap{
+								0: 0,
+							},
 						},
 						2: struct{ Explicit, Implicit edgeMap }{
 							Explicit: edgeMap{
 								0: 0,
 							},
-							Implicit: edgeMap{},
+							Implicit: edgeMap{
+								1: 0,
+							},
 						},
 					},
 				},
