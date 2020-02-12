@@ -126,19 +126,19 @@ func TestTopologicalSort(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		got, err := test.input.TopologicalSort()
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("%v: %v", i, err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v != %v", got, test.want)
+				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
 	}

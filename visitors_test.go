@@ -65,19 +65,19 @@ func TestDepthFirstSearch(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		got, err := test.graph.DepthFirstSearch(test.input)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v != %v", got, test.want)
+				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
 	}
@@ -143,7 +143,7 @@ func TestDepthFirstVisit(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		got := make([]interface{}, 0)
 		err := test.graph.DepthFirstVisit(test.input, func(v interface{}) (stop bool) {
 			got = append(got, v)
@@ -152,14 +152,14 @@ func TestDepthFirstVisit(t *testing.T) {
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v != %v", got, test.want)
+				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
 	}
@@ -225,19 +225,19 @@ func TestBreadthFirstSearch(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		got, err := test.graph.BreadthFirstSearch(test.input)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v != %v", got, test.want)
+				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
 	}
@@ -303,7 +303,7 @@ func TestBreadthFirstVisit(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		got := make([]interface{}, 0)
 		err := test.graph.BreadthFirstVisit(test.input, func(v interface{}) (stop bool) {
 			got = append(got, v)
@@ -312,14 +312,14 @@ func TestBreadthFirstVisit(t *testing.T) {
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v != %v", got, test.want)
+				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
 	}

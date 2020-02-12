@@ -42,19 +42,19 @@ func TestAddVertex(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		err := test.graph.AddVertex(test.input)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(test.graph, test.want) {
-				t.Errorf("%+v != %+v", test.graph, test.want)
+				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
 	}
@@ -114,19 +114,19 @@ func TestRemoveVertex(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		err := test.graph.RemoveVertex(test.input)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(test.graph, test.want) {
-				t.Errorf("%+v != %+v", test.graph, test.want)
+				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
 	}
@@ -179,19 +179,19 @@ func TestAddVertices(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		err := test.graph.AddVertices(test.input...)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(test.graph, test.want) {
-				t.Errorf("%+v != %+v", test.graph, test.want)
+				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
 	}
@@ -269,19 +269,19 @@ func TestAddEdge(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		err := test.graph.AddEdge(test.input.a, test.input.b, 0)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(test.graph, test.want) {
-				t.Errorf("%+v != %+v", test.graph, test.want)
+				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
 	}
@@ -448,19 +448,19 @@ func TestRemoveEdge(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		err := test.graph.RemoveEdge(test.input.a, test.input.b)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(test.graph, test.want) {
-				t.Errorf("%+v != %+v", test.graph, test.want)
+				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
 	}
@@ -522,19 +522,19 @@ func TestNeighbors(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		got, err := test.graph.Neighbors(test.input, NoDirection)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v != %v", err, test.wantError)
+				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%+v != %+v", got, test.want)
+				t.Errorf("%v: %+v != %+v", i, got, test.want)
 			}
 		}
 	}
