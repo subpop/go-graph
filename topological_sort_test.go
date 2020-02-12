@@ -138,7 +138,7 @@ func TestTopologicalSort(t *testing.T) {
 				t.Fatalf("%v: %v", i, err)
 			}
 			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v: %v != %v", i, got, test.want)
+				t.Errorf("%v: %+v != %+v", i, got, test.want)
 			}
 		}
 	}
