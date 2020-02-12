@@ -21,16 +21,28 @@ func TestTopologicalSort(t *testing.T) {
 					3: true,
 				},
 				adjacencyMap: adjacencyMap{
-					0: edgeMap{},
-					1: edgeMap{
-						0: 0,
+					0: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
 					},
-					2: edgeMap{
-						1: 0,
+					1: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							0: 0,
+						},
+						Implicit: edgeMap{},
 					},
-					3: edgeMap{
-						2: 0,
-						1: 0,
+					2: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							1: 0,
+						},
+						Implicit: edgeMap{},
+					},
+					3: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							2: 0,
+							1: 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -60,14 +72,23 @@ func TestTopologicalSort(t *testing.T) {
 					2: true,
 				},
 				adjacencyMap: adjacencyMap{
-					0: edgeMap{
-						1: 0,
+					0: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							1: 0,
+						},
+						Implicit: edgeMap{},
 					},
-					1: edgeMap{
-						2: 0,
+					1: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							2: 0,
+						},
+						Implicit: edgeMap{},
 					},
-					2: edgeMap{
-						0: 0,
+					2: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							0: 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -81,14 +102,23 @@ func TestTopologicalSort(t *testing.T) {
 						2: true,
 					},
 					adjacencyMap: adjacencyMap{
-						0: edgeMap{
-							1: 0,
+						0: struct{ Explicit, Implicit edgeMap }{
+							Explicit: edgeMap{
+								1: 0,
+							},
+							Implicit: edgeMap{},
 						},
-						1: edgeMap{
-							2: 0,
+						1: struct{ Explicit, Implicit edgeMap }{
+							Explicit: edgeMap{
+								2: 0,
+							},
+							Implicit: edgeMap{},
 						},
-						2: edgeMap{
-							0: 0,
+						2: struct{ Explicit, Implicit edgeMap }{
+							Explicit: edgeMap{
+								0: 0,
+							},
+							Implicit: edgeMap{},
 						},
 					},
 				},

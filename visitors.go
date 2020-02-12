@@ -36,7 +36,7 @@ func (g *Graph) visit(v interface{}, visited map[interface{}]bool, visitorFunc f
 		return
 	}
 	visited[v] = true
-	for n := range g.adjacencyMap[v] {
+	for n := range g.adjacencyMap[v].Explicit {
 		if _, ok := visited[n]; !ok {
 			g.visit(n, visited, visitorFunc)
 		}
@@ -71,7 +71,7 @@ func (g *Graph) BreadthFirstVisit(v interface{}, visitorFunc func(v interface{})
 		if stop := visitorFunc(v); stop {
 			return nil
 		}
-		for n := range g.adjacencyMap[v] {
+		for n := range g.adjacencyMap[v].Explicit {
 			if _, ok := visited[n]; !ok {
 				visited[n] = true
 				q.Enqueue(n)

@@ -3,9 +3,6 @@ package graph
 import (
 	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestAddVertex(t *testing.T) {
@@ -16,14 +13,20 @@ func TestAddVertex(t *testing.T) {
 		wantError error
 	}{
 		{
-			graph: NewGraph(false),
+			graph: Graph{
+				vertices:     set{},
+				adjacencyMap: adjacencyMap{},
+			},
 			input: "a",
 			want: Graph{
 				vertices: set{
 					"a": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{},
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 		},
@@ -32,7 +35,7 @@ func TestAddVertex(t *testing.T) {
 				vertices: set{
 					"a": true,
 				},
-				adjacencyMap: make(adjacencyMap),
+				adjacencyMap: adjacencyMap{},
 			},
 			input:     "a",
 			wantError: &DuplicateVertexErr{"a"},
@@ -71,11 +74,13 @@ func TestRemoveVertex(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -85,7 +90,10 @@ func TestRemoveVertex(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"b": edgeMap{},
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 		},
@@ -95,7 +103,10 @@ func TestRemoveVertex(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"b": edgeMap{},
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 			input:     "a",
@@ -129,7 +140,10 @@ func TestAddVertices(t *testing.T) {
 		wantError error
 	}{
 		{
-			graph: NewGraph(false),
+			graph: Graph{
+				vertices:     set{},
+				adjacencyMap: adjacencyMap{},
+			},
 			input: []interface{}{"a", "b"},
 			want: Graph{
 				vertices: set{
@@ -137,8 +151,14 @@ func TestAddVertices(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{},
-					"b": edgeMap{},
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 		},
@@ -148,7 +168,10 @@ func TestAddVertices(t *testing.T) {
 					"a": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{},
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 			input:     []interface{}{"a"},
@@ -188,8 +211,14 @@ func TestAddEdge(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{},
-					"b": edgeMap{},
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 			input: struct{ a, b string }{"a", "b"},
@@ -199,11 +228,17 @@ func TestAddEdge(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -215,11 +250,17 @@ func TestAddEdge(t *testing.T) {
 					"b": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -261,15 +302,24 @@ func TestRemoveEdge(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"c": edgeMap{
-						"b": 0,
+					"c": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -281,12 +331,21 @@ func TestRemoveEdge(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{},
-					"b": edgeMap{
-						"c": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
 					},
-					"c": edgeMap{
-						"b": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
+					},
+					"c": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -299,15 +358,24 @@ func TestRemoveEdge(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"c": edgeMap{
-						"b": 0,
+					"c": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -322,15 +390,24 @@ func TestRemoveEdge(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"c": edgeMap{
-						"b": 0,
+					"c": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -345,15 +422,24 @@ func TestRemoveEdge(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"c": edgeMap{
-						"b": 0,
+					"c": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -395,15 +481,24 @@ func TestNeighbors(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"a": 0,
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"a": 0,
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"c": edgeMap{
-						"b": 0,
+					"c": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -416,7 +511,10 @@ func TestNeighbors(t *testing.T) {
 					"a": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{},
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{},
+						Implicit: edgeMap{},
+					},
 				},
 			},
 			input:     "b",
@@ -425,7 +523,7 @@ func TestNeighbors(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got, err := test.graph.Neighbors(test.input)
+		got, err := test.graph.Neighbors(test.input, NoDirection)
 
 		if test.wantError != nil {
 			if !reflect.DeepEqual(err, test.wantError) {
@@ -435,7 +533,7 @@ func TestNeighbors(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !cmp.Equal(got, test.want, cmp.Options{cmpopts.SortSlices(func(a, b string) bool { return a < b })}) {
+			if !reflect.DeepEqual(got, test.want) {
 				t.Errorf("%+v != %+v", got, test.want)
 			}
 		}

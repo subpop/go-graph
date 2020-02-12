@@ -5,9 +5,25 @@ import (
 	"reflect"
 )
 
+// Direction is the direction of a relationship between two vertices in
+// a directed graph. It has no meaning in undirected graphs.
+type Direction int
+
+const (
+	// NoDirection represents the absence of direction. In a directed graph,
+	// this means both inbound and outbound edges.
+	NoDirection Direction = iota
+
+	// Outbound represents only edges going "out" from a vertex.
+	Outbound
+
+	// Inbound represents only edges going "in" to a vertex.
+	Inbound
+)
+
 type set map[interface{}]bool
 type edgeMap map[interface{}]float64
-type adjacencyMap map[interface{}]edgeMap
+type adjacencyMap map[interface{}]struct{ Explicit, Implicit edgeMap }
 
 // A MissingVertexErr describes a vertex that does not exist in a Graph.
 type MissingVertexErr struct {
@@ -67,7 +83,7 @@ func NewGraph(isDirected bool) Graph {
 func (g Graph) String() string {
 	out := "{ "
 	for a, e := range g.adjacencyMap {
-		for b := range e {
+		for b := range e.Explicit {
 			out += fmt.Sprintf("(%v, %v) ", a, b)
 		}
 	}
@@ -82,7 +98,10 @@ func (g *Graph) AddVertex(v interface{}) error {
 	}
 
 	g.vertices[v] = true
-	g.adjacencyMap[v] = make(edgeMap)
+	g.adjacencyMap[v] = struct{ Explicit, Implicit edgeMap }{
+		Explicit: make(edgeMap),
+		Implicit: make(edgeMap),
+	}
 
 	return nil
 }
@@ -106,8 +125,11 @@ func (g *Graph) RemoveVertex(v interface{}) error {
 		return &MissingVertexErr{v}
 	}
 
-	for n := range g.adjacencyMap[v] {
-		delete(g.adjacencyMap[n], v)
+	for n := range g.adjacencyMap[v].Explicit {
+		delete(g.adjacencyMap[n].Explicit, v)
+	}
+	for n := range g.adjacencyMap[v].Implicit {
+		delete(g.adjacencyMap[n].Implicit, v)
 	}
 
 	delete(g.adjacencyMap, v)
@@ -134,12 +156,16 @@ func (g *Graph) AddEdge(a, b interface{}, weight float64) error {
 		}
 	}
 
-	if err := g.addEdge(a, b, weight); err != nil {
+	if err := g.addExplicitEdge(a, b, weight); err != nil {
 		return err
 	}
 
-	if !g.isDirected {
-		if err := g.addEdge(b, a, weight); err != nil {
+	if g.isDirected {
+		if err := g.addImplicitEdge(b, a, weight); err != nil {
+			return err
+		}
+	} else {
+		if err := g.addExplicitEdge(b, a, weight); err != nil {
 			return err
 		}
 	}
@@ -147,13 +173,24 @@ func (g *Graph) AddEdge(a, b interface{}, weight float64) error {
 	return nil
 }
 
-func (g *Graph) addEdge(a, b interface{}, weight float64) error {
-	neighbors := g.adjacencyMap[a]
-	if _, ok := neighbors[b]; ok {
+func (g *Graph) addExplicitEdge(a, b interface{}, weight float64) error {
+	edges := g.adjacencyMap[a]
+	if _, ok := edges.Explicit[b]; ok {
 		return &DuplicateEdgeErr{a, b}
 	}
-	neighbors[b] = weight
-	g.adjacencyMap[a] = neighbors
+	edges.Explicit[b] = weight
+	g.adjacencyMap[a] = edges
+
+	return nil
+}
+
+func (g *Graph) addImplicitEdge(a, b interface{}, weight float64) error {
+	edges := g.adjacencyMap[a]
+	if _, ok := edges.Implicit[b]; ok {
+		return &DuplicateEdgeErr{a, b}
+	}
+	edges.Implicit[b] = weight
+	g.adjacencyMap[a] = edges
 
 	return nil
 }
@@ -171,12 +208,16 @@ func (g *Graph) RemoveEdge(a, b interface{}) error {
 		return &MissingVertexErr{b}
 	}
 
-	if err := g.removeEdge(a, b); err != nil {
+	if err := g.removeExplicitEdge(a, b); err != nil {
 		return err
 	}
 
-	if !g.isDirected {
-		if err := g.removeEdge(b, a); err != nil {
+	if g.isDirected {
+		if err := g.removeImplicitEdge(b, a); err != nil {
+			return err
+		}
+	} else {
+		if err := g.removeExplicitEdge(b, a); err != nil {
 			return err
 		}
 	}
@@ -184,13 +225,24 @@ func (g *Graph) RemoveEdge(a, b interface{}) error {
 	return nil
 }
 
-func (g *Graph) removeEdge(a, b interface{}) error {
-	neighbors := g.adjacencyMap[a]
-	if _, ok := neighbors[b]; !ok {
+func (g *Graph) removeExplicitEdge(a, b interface{}) error {
+	edges := g.adjacencyMap[a]
+	if _, ok := edges.Explicit[b]; !ok {
 		return &MissingEdgeErr{a, b}
 	}
-	delete(neighbors, b)
-	g.adjacencyMap[a] = neighbors
+	delete(edges.Explicit, b)
+	g.adjacencyMap[a] = edges
+
+	return nil
+}
+
+func (g *Graph) removeImplicitEdge(a, b interface{}) error {
+	edges := g.adjacencyMap[a]
+	if _, ok := edges.Implicit[b]; !ok {
+		return &MissingEdgeErr{a, b}
+	}
+	delete(edges.Implicit, b)
+	g.adjacencyMap[a] = edges
 
 	return nil
 }
@@ -200,14 +252,30 @@ func (g Graph) NumVertex() int {
 	return len(g.vertices)
 }
 
-// Neighbors returns a slice of vertices adjacent to v. If the graph does not
-// contain vertex v, it returns MissingVertexErr.
-func (g Graph) Neighbors(v interface{}) ([]interface{}, error) {
+// Neighbors returns a slice of vertices adjacent to v, given direction d. If
+// the graph is undirected, d is ignored. If the graph does not contain vertex
+// v, it returns MissingVertexErr.
+func (g Graph) Neighbors(v interface{}, d Direction) ([]interface{}, error) {
 	if _, ok := g.vertices[v]; !ok {
 		return nil, &MissingVertexErr{v}
 	}
 
-	neighbors := g.adjacencyMap[v]
+	var neighbors edgeMap
+	if g.isDirected {
+		switch d {
+		case Outbound:
+			neighbors = g.adjacencyMap[v].Explicit
+		case Inbound:
+			neighbors = g.adjacencyMap[v].Implicit
+		default:
+			neighbors = g.adjacencyMap[v].Explicit
+			for k, v := range g.adjacencyMap[v].Implicit {
+				neighbors[k] = v
+			}
+		}
+	} else {
+		neighbors = g.adjacencyMap[v].Explicit
+	}
 
 	vertices := make([]interface{}, 0, len(neighbors))
 	for vertex := range neighbors {

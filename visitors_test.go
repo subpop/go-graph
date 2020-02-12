@@ -20,11 +20,17 @@ func TestDepthFirstSearch(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -39,11 +45,17 @@ func TestDepthFirstSearch(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -86,11 +98,17 @@ func TestDepthFirstVisit(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -105,11 +123,17 @@ func TestDepthFirstVisit(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -156,11 +180,17 @@ func TestBreadthFirstSearch(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -175,11 +205,17 @@ func TestBreadthFirstSearch(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -222,11 +258,17 @@ func TestBreadthFirstVisit(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},
@@ -241,11 +283,17 @@ func TestBreadthFirstVisit(t *testing.T) {
 					"c": true,
 				},
 				adjacencyMap: adjacencyMap{
-					"a": edgeMap{
-						"b": 0,
+					"a": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"b": 0,
+						},
+						Implicit: edgeMap{},
 					},
-					"b": edgeMap{
-						"c": 0,
+					"b": struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							"c": 0,
+						},
+						Implicit: edgeMap{},
 					},
 				},
 			},

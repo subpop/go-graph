@@ -65,7 +65,7 @@ func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, sta
 	}
 	visited[v] = true
 
-	for n := range g.adjacencyMap[v] {
+	for n := range g.adjacencyMap[v].Explicit {
 		if _, ok := visited[n]; !ok {
 			if err := g.topologicalSort(n, visited, stack); err != nil {
 				return err
