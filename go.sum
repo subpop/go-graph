@@ -1,14 +1,2 @@
-github.com/google/go-cmp v0.3.1 h1:Xye71clBPdm5HgqGwUkwhbynsUJZhDbS20FvLhQ2izg=
-github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
-github.com/subpop/go-adt v0.0.0-20191022004211-51b4c62ca8f5 h1:Wa+U4xP0P0UiRTsaUuTZcDH9DRhiyjCSfEdbi/kPorE=
-github.com/subpop/go-adt v0.0.0-20191022004211-51b4c62ca8f5/go.mod h1:x9ba6dW92MkQrZba7wmKtZPYVU/LskCrNfaLgF3SxOs=
-github.com/subpop/go-adt v0.1.0 h1:K+JAIGfBh6bvxGdqk9TRjc6fVqmQu6JrasDqbOkB1nI=
-github.com/subpop/go-adt v0.1.0/go.mod h1:x9ba6dW92MkQrZba7wmKtZPYVU/LskCrNfaLgF3SxOs=
-github.com/subpop/go-adt v0.1.1-0.20200207032247-80e4e73db2a2 h1:K6J9WWLRpWfIXFRN0KjiuzzKcRbrEWy3oX3DG+qivqY=
-github.com/subpop/go-adt v0.1.1-0.20200207032247-80e4e73db2a2/go.mod h1:x9ba6dW92MkQrZba7wmKtZPYVU/LskCrNfaLgF3SxOs=
-github.com/subpop/go-adt v0.1.1-0.20200207032600-1df89960df80 h1:C00xwQoOdXZJElcVMBjJ7gWuGKrYxO3ujQ6p2a3k+xg=
-github.com/subpop/go-adt v0.1.1-0.20200207032600-1df89960df80/go.mod h1:x9ba6dW92MkQrZba7wmKtZPYVU/LskCrNfaLgF3SxOs=
-github.com/subpop/go-adt v0.1.1-0.20200207033643-fdd0f2023775 h1:2F8FNdBHdin8HaOsnCbnY+ZrwnCb1OdaVDhrzFVvwp8=
-github.com/subpop/go-adt v0.1.1-0.20200207033643-fdd0f2023775/go.mod h1:x9ba6dW92MkQrZba7wmKtZPYVU/LskCrNfaLgF3SxOs=
 github.com/subpop/go-adt v0.1.1-0.20200207043904-9e5de5584f76 h1:nI8FLXQY1lmsPj+EHOCnqLBH3SlQbJbGuc2dAH9VSvs=
 github.com/subpop/go-adt v0.1.1-0.20200207043904-9e5de5584f76/go.mod h1:x9ba6dW92MkQrZba7wmKtZPYVU/LskCrNfaLgF3SxOs=
