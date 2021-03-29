@@ -1,8 +1,9 @@
 package graph
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestDepthFirstSearch(t *testing.T) {
@@ -69,14 +70,14 @@ func TestDepthFirstSearch(t *testing.T) {
 		got, err := test.graph.DepthFirstSearch(test.input)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmp.AllowUnexported(MissingVertexErr{})) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
+			if !cmp.Equal(got, test.want) {
 				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
@@ -151,14 +152,14 @@ func TestDepthFirstVisit(t *testing.T) {
 		})
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmp.AllowUnexported(MissingVertexErr{})) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
+			if !cmp.Equal(got, test.want) {
 				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
@@ -229,14 +230,14 @@ func TestBreadthFirstSearch(t *testing.T) {
 		got, err := test.graph.BreadthFirstSearch(test.input)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmp.AllowUnexported(MissingVertexErr{})) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
+			if !cmp.Equal(got, test.want) {
 				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
@@ -311,14 +312,14 @@ func TestBreadthFirstVisit(t *testing.T) {
 		})
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmp.AllowUnexported(MissingVertexErr{})) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
+			if !cmp.Equal(got, test.want) {
 				t.Errorf("%v: %v != %v", i, got, test.want)
 			}
 		}
