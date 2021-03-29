@@ -38,13 +38,8 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 	visited := make(map[interface{}]bool)
 
 	for v := range g.vertices {
-		if visited[v] == true {
-			return nil, &CycleDetectedErr{g: g}
-		}
-		if _, ok := visited[v]; !ok {
-			if err := g.topologicalSort(v, visited, &stack); err != nil {
-				return nil, err
-			}
+		if err := g.topologicalSort(v, visited, &stack); err != nil {
+			return nil, err
 		}
 	}
 
