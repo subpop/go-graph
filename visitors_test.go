@@ -67,7 +67,7 @@ func TestDepthFirstSearch(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got, err := test.graph.DepthFirstSearch(test.input)
+		got, err := test.graph.DepthFirstSearch(test.input, Outbound)
 
 		if test.wantError != nil {
 			if !cmp.Equal(err, test.wantError, cmp.AllowUnexported(MissingVertexErr{})) {
@@ -146,7 +146,7 @@ func TestDepthFirstVisit(t *testing.T) {
 
 	for i, test := range tests {
 		got := make([]interface{}, 0)
-		err := test.graph.DepthFirstVisit(test.input, func(v interface{}) (stop bool) {
+		err := test.graph.DepthFirstVisit(test.input, Outbound, func(v interface{}) (stop bool) {
 			got = append(got, v)
 			return
 		})
@@ -227,7 +227,7 @@ func TestBreadthFirstSearch(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got, err := test.graph.BreadthFirstSearch(test.input)
+		got, err := test.graph.BreadthFirstSearch(test.input, Outbound)
 
 		if test.wantError != nil {
 			if !cmp.Equal(err, test.wantError, cmp.AllowUnexported(MissingVertexErr{})) {
@@ -306,7 +306,7 @@ func TestBreadthFirstVisit(t *testing.T) {
 
 	for i, test := range tests {
 		got := make([]interface{}, 0)
-		err := test.graph.BreadthFirstVisit(test.input, func(v interface{}) (stop bool) {
+		err := test.graph.BreadthFirstVisit(test.input, Outbound, func(v interface{}) (stop bool) {
 			got = append(got, v)
 			return
 		})
