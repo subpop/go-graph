@@ -33,7 +33,6 @@ func TestTopologicalSort(t *testing.T) {
 						},
 						Implicit: edgeMap{
 							2: 0,
-							3: 0,
 						},
 					},
 					2: struct{ Explicit, Implicit edgeMap }{
@@ -47,7 +46,6 @@ func TestTopologicalSort(t *testing.T) {
 					3: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
 							2: 0,
-							1: 0,
 						},
 						Implicit: edgeMap{},
 					},
@@ -74,33 +72,33 @@ func TestTopologicalSort(t *testing.T) {
 			input: Graph{
 				isDirected: true,
 				vertices: set{
-					0: true,
 					1: true,
 					2: true,
+					3: true,
 				},
 				adjacencyMap: adjacencyMap{
-					0: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
-							1: 0,
-						},
-						Implicit: edgeMap{
-							2: 0,
-						},
-					},
 					1: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
 							2: 0,
 						},
 						Implicit: edgeMap{
-							0: 0,
+							3: 0,
 						},
 					},
 					2: struct{ Explicit, Implicit edgeMap }{
 						Explicit: edgeMap{
-							0: 0,
+							3: 0,
 						},
 						Implicit: edgeMap{
 							1: 0,
+						},
+					},
+					3: struct{ Explicit, Implicit edgeMap }{
+						Explicit: edgeMap{
+							1: 0,
+						},
+						Implicit: edgeMap{
+							2: 0,
 						},
 					},
 				},
@@ -110,33 +108,33 @@ func TestTopologicalSort(t *testing.T) {
 				g: &Graph{
 					isDirected: true,
 					vertices: set{
-						0: true,
 						1: true,
 						2: true,
+						3: true,
 					},
 					adjacencyMap: adjacencyMap{
-						0: struct{ Explicit, Implicit edgeMap }{
-							Explicit: edgeMap{
-								1: 0,
-							},
-							Implicit: edgeMap{
-								2: 0,
-							},
-						},
 						1: struct{ Explicit, Implicit edgeMap }{
 							Explicit: edgeMap{
 								2: 0,
 							},
 							Implicit: edgeMap{
-								0: 0,
+								3: 0,
 							},
 						},
 						2: struct{ Explicit, Implicit edgeMap }{
 							Explicit: edgeMap{
-								0: 0,
+								3: 0,
 							},
 							Implicit: edgeMap{
 								1: 0,
+							},
+						},
+						3: struct{ Explicit, Implicit edgeMap }{
+							Explicit: edgeMap{
+								1: 0,
+							},
+							Implicit: edgeMap{
+								2: 0,
 							},
 						},
 					},
