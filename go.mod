@@ -1,4 +1,4 @@
-module git.sr.ht/~spc/go-graph
+module github.com/subpop/go-graph
 
 go 1.14
 

@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"git.sr.ht/~spc/go-graph"
+	"github.com/subpop/go-graph"
 )
 
 type Package struct {
