@@ -63,10 +63,13 @@ func (g *Graph) BreadthFirstSearch(v interface{}, d Direction) ([]interface{}, e
 		return nil, &MissingVertexErr{v}
 	}
 	result := make([]interface{}, 0)
-	g.BreadthFirstVisit(v, d, func(v interface{}) (stop bool) {
+	err := g.BreadthFirstVisit(v, d, func(v interface{}) (stop bool) {
 		result = append(result, v)
 		return
 	})
+	if err != nil {
+		return nil, err
+	}
 	return result, nil
 }
 
