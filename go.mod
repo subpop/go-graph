@@ -4,5 +4,5 @@ go 1.14
 
 require (
 	github.com/google/go-cmp v0.6.0
-	github.com/subpop/go-adt v0.1.1-0.20200207043904-9e5de5584f76
+	github.com/subpop/go-adt v0.1.0
 )
