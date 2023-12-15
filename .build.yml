@@ -1,9 +1,0 @@
-image: archlinux
-packages:
-  - go
-sources:
-  - https://git.sr.ht/~spc/go-graph
-tasks:
-  - test: |
-      cd go-graph
-      go test -race -v ./
