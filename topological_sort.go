@@ -55,7 +55,7 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 }
 
 func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, stack *adt.Stack) error {
-	if visited[v] == true {
+	if visited[v] {
 		return &CycleDetectedErr{g: g}
 	}
 	visited[v] = true
