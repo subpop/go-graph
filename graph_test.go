@@ -5,6 +5,53 @@ import (
 	"testing"
 )
 
+func UtilityGraph() Graph {
+	return Graph{
+		vertices: set{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true},
+		adjacencyMap: adjacencyMap{
+			"a": struct {
+				Explicit edgeMap
+				Implicit edgeMap
+			}{
+				Explicit: edgeMap{"x": 0, "y": 0, "z": 0},
+				Implicit: edgeMap{},
+			},
+			"b": struct {
+				Explicit edgeMap
+				Implicit edgeMap
+			}{
+				Explicit: edgeMap{"x": 0, "y": 0, "z": 0},
+				Implicit: edgeMap{},
+			},
+			"c": struct {
+				Explicit edgeMap
+				Implicit edgeMap
+			}{
+				Explicit: edgeMap{"x": 0, "y": 0, "z": 0},
+				Implicit: edgeMap{},
+			},
+			"x": struct {
+				Explicit edgeMap
+				Implicit edgeMap
+			}{
+				Explicit: edgeMap{"a": 0, "b": 0, "c": 0},
+			},
+			"y": struct {
+				Explicit edgeMap
+				Implicit edgeMap
+			}{
+				Explicit: edgeMap{"a": 0, "b": 0, "c": 0},
+			},
+			"z": struct {
+				Explicit edgeMap
+				Implicit edgeMap
+			}{
+				Explicit: edgeMap{"a": 0, "b": 0, "c": 0},
+			},
+		},
+	}
+}
+
 func TestAddVertex(t *testing.T) {
 	tests := []struct {
 		graph     Graph
