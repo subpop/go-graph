@@ -77,7 +77,7 @@ func TestNeighborhood(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y int) bool { return x < y })) {
+				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y int) bool { return x > y })) {
 					t.Errorf("%v", cmp.Diff(got, test.want))
 				}
 			}
