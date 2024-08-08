@@ -56,10 +56,11 @@ func UtilityGraph() Graph {
 
 func TestAddVertex(t *testing.T) {
 	tests := []struct {
-		graph     Graph
-		input     string
-		want      Graph
-		wantError error
+		description string
+		graph       Graph
+		input       string
+		want        Graph
+		wantError   error
 	}{
 		{
 			graph: Graph{
@@ -91,30 +92,33 @@ func TestAddVertex(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		err := test.graph.AddVertex(test.input)
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			err := test.graph.AddVertex(test.input)
 
-		if test.wantError != nil {
-			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
-				t.Errorf("%v: %#v != %#v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%#v != %#v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+					t.Errorf("%+v != %+v", test.graph, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
-				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
-			}
-		}
+		})
 	}
 }
 
 func TestRemoveVertex(t *testing.T) {
 	tests := []struct {
-		graph     Graph
-		input     string
-		want      Graph
-		wantError error
+		description string
+		graph       Graph
+		input       string
+		want        Graph
+		wantError   error
 	}{
 		{
 			graph: Graph{
@@ -163,30 +167,33 @@ func TestRemoveVertex(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		err := test.graph.RemoveVertex(test.input)
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			err := test.graph.RemoveVertex(test.input)
 
-		if test.wantError != nil {
-			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%v != %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+					t.Errorf("%+v != %+v", test.graph, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
-				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
-			}
-		}
+		})
 	}
 }
 
 func TestAddVertices(t *testing.T) {
 	tests := []struct {
-		graph     Graph
-		input     []interface{}
-		want      Graph
-		wantError error
+		description string
+		graph       Graph
+		input       []interface{}
+		want        Graph
+		wantError   error
 	}{
 		{
 			graph: Graph{
@@ -228,30 +235,33 @@ func TestAddVertices(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		err := test.graph.AddVertices(test.input...)
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			err := test.graph.AddVertices(test.input...)
 
-		if test.wantError != nil {
-			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%v != %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+					t.Errorf("%+v != %+v", test.graph, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
-				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
-			}
-		}
+		})
 	}
 }
 
 func TestAddEdge(t *testing.T) {
 	tests := []struct {
-		graph     Graph
-		input     struct{ a, b string }
-		want      Graph
-		wantError error
+		description string
+		graph       Graph
+		input       struct{ a, b string }
+		want        Graph
+		wantError   error
 	}{
 		{
 			graph: Graph{
@@ -318,30 +328,33 @@ func TestAddEdge(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		err := test.graph.AddEdge(test.input.a, test.input.b, 0)
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			err := test.graph.AddEdge(test.input.a, test.input.b, 0)
 
-		if test.wantError != nil {
-			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%v != %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+					t.Errorf("%+v != %+v", test.graph, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
-				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
-			}
-		}
+		})
 	}
 }
 
 func TestRemoveEdge(t *testing.T) {
 	tests := []struct {
-		graph     Graph
-		input     struct{ a, b string }
-		want      Graph
-		wantError error
+		description string
+		graph       Graph
+		input       struct{ a, b string }
+		want        Graph
+		wantError   error
 	}{
 		{
 			graph: Graph{
@@ -497,30 +510,33 @@ func TestRemoveEdge(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		err := test.graph.RemoveEdge(test.input.a, test.input.b)
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			err := test.graph.RemoveEdge(test.input.a, test.input.b)
 
-		if test.wantError != nil {
-			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%v != %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+					t.Errorf("%+v != %+v", test.graph, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
-				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
-			}
-		}
+		})
 	}
 }
 
 func TestNeighbors(t *testing.T) {
 	tests := []struct {
-		graph     Graph
-		input     string
-		want      []interface{}
-		wantError error
+		description string
+		graph       Graph
+		input       string
+		want        []interface{}
+		wantError   error
 	}{
 		{
 			graph: Graph{
@@ -571,20 +587,22 @@ func TestNeighbors(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		got, err := test.graph.Neighbors(test.input, NoDirection)
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got, err := test.graph.Neighbors(test.input, NoDirection)
 
-		if test.wantError != nil {
-			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%v != %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{}), cmpopts.SortSlices(func(x, y int) bool { return x < y })) {
+					t.Errorf("%+v != %+v", got, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{}), cmpopts.SortSlices(func(x, y int) bool { return x < y })) {
-				t.Errorf("%v: %+v != %+v", i, got, test.want)
-			}
-		}
+		})
 	}
 }
