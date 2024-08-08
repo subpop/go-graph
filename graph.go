@@ -34,6 +34,10 @@ func (e *MissingVertexErr) Error() string {
 	return "err: missing vertex: " + reflect.ValueOf(e.v).String()
 }
 
+func (e *MissingVertexErr) Is(target error) bool {
+	return reflect.TypeOf(e) == reflect.TypeOf(target)
+}
+
 // A MissingEdgeErr describes an edge (a pair of ordered vertices) that does
 // not exist in a Graph.
 type MissingEdgeErr struct {
@@ -42,6 +46,10 @@ type MissingEdgeErr struct {
 
 func (e *MissingEdgeErr) Error() string {
 	return "err: missing edge (" + reflect.ValueOf(e.from).String() + " - " + reflect.ValueOf(e.to).String() + ")"
+}
+
+func (e *MissingEdgeErr) Is(target error) bool {
+	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // A DuplicateVertexErr describes a vertex that already exists in a Graph.
@@ -53,6 +61,10 @@ func (e *DuplicateVertexErr) Error() string {
 	return "err: duplicate vertex: " + reflect.ValueOf(e.v).String()
 }
 
+func (e *DuplicateVertexErr) Is(target error) bool {
+	return reflect.TypeOf(e) == reflect.TypeOf(target)
+}
+
 // A DuplicateEdgeErr describes an edge (a pair of ordered vertices) that
 // already exist in a Graph.
 type DuplicateEdgeErr struct {
@@ -61,6 +73,10 @@ type DuplicateEdgeErr struct {
 
 func (e *DuplicateEdgeErr) Error() string {
 	return "err: duplicate edge (" + reflect.ValueOf(e.from).String() + " - " + reflect.ValueOf(e.to).String() + ")"
+}
+
+func (e *DuplicateEdgeErr) Is(target error) bool {
+	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // A Graph is an unordered set of nodes along with a set of weighted ordered-pair

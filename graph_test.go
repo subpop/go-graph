@@ -1,8 +1,10 @@
 package graph
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func UtilityGraph() Graph {
@@ -93,14 +95,14 @@ func TestAddVertex(t *testing.T) {
 		err := test.graph.AddVertex(test.input)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+				t.Errorf("%v: %#v != %#v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(test.graph, test.want) {
+			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
 				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
@@ -165,14 +167,14 @@ func TestRemoveVertex(t *testing.T) {
 		err := test.graph.RemoveVertex(test.input)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(test.graph, test.want) {
+			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
 				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
@@ -230,14 +232,14 @@ func TestAddVertices(t *testing.T) {
 		err := test.graph.AddVertices(test.input...)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(test.graph, test.want) {
+			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
 				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
@@ -320,14 +322,14 @@ func TestAddEdge(t *testing.T) {
 		err := test.graph.AddEdge(test.input.a, test.input.b, 0)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(test.graph, test.want) {
+			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
 				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
@@ -499,14 +501,14 @@ func TestRemoveEdge(t *testing.T) {
 		err := test.graph.RemoveEdge(test.input.a, test.input.b)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(test.graph, test.want) {
+			if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
 				t.Errorf("%v: %+v != %+v", i, test.graph, test.want)
 			}
 		}
@@ -573,14 +575,14 @@ func TestNeighbors(t *testing.T) {
 		got, err := test.graph.Neighbors(test.input, NoDirection)
 
 		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
+			if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
 				t.Errorf("%v: %v != %v", i, err, test.wantError)
 			}
 		} else {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if !reflect.DeepEqual(got, test.want) {
+			if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{}), cmpopts.SortSlices(func(x, y int) bool { return x < y })) {
 				t.Errorf("%v: %+v != %+v", i, got, test.want)
 			}
 		}
