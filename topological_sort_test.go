@@ -1,17 +1,21 @@
 package graph
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestTopologicalSort(t *testing.T) {
 	tests := []struct {
-		input     Graph
-		want      []interface{}
-		wantError error
+		description string
+		input       Graph
+		want        []interface{}
+		wantError   error
 	}{
 		{
+			description: "linear dependency",
 			input: Graph{
 				isDirected: true,
 				vertices: set{
@@ -54,6 +58,7 @@ func TestTopologicalSort(t *testing.T) {
 			want: []interface{}{3, 2, 1, 0},
 		},
 		{
+			description: "undirected graph",
 			input: Graph{
 				isDirected:   false,
 				vertices:     set{},
@@ -69,6 +74,7 @@ func TestTopologicalSort(t *testing.T) {
 			},
 		},
 		{
+			description: "cycle detected",
 			input: Graph{
 				isDirected: true,
 				vertices: set{
@@ -143,20 +149,22 @@ func TestTopologicalSort(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		got, err := test.input.TopologicalSort()
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got, err := test.input.TopologicalSort()
 
-		if test.wantError != nil {
-			if !reflect.DeepEqual(err, test.wantError) {
-				t.Errorf("%v: %v != %v", i, err, test.wantError)
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("%#v != %#v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("%v", err)
+				}
+				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{})) {
+					t.Errorf("%+v != %+v", got, test.want)
+				}
 			}
-		} else {
-			if err != nil {
-				t.Fatalf("%v: %v", i, err)
-			}
-			if !reflect.DeepEqual(got, test.want) {
-				t.Errorf("%v: %+v != %+v", i, got, test.want)
-			}
-		}
+		})
 	}
 }

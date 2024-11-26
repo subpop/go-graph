@@ -2,6 +2,7 @@ package graph
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/subpop/go-adt"
 )
@@ -15,6 +16,10 @@ func (e *CycleDetectedErr) Error() string {
 	return fmt.Sprintf("err: cycle detected in graph: %v", e.g)
 }
 
+func (e *CycleDetectedErr) Is(target error) bool {
+	return reflect.TypeOf(e) == reflect.TypeOf(target)
+}
+
 // An UndirectedGraphErr describes a graph that is undirected.
 type UndirectedGraphErr struct {
 	g *Graph
@@ -22,6 +27,10 @@ type UndirectedGraphErr struct {
 
 func (e *UndirectedGraphErr) Error() string {
 	return fmt.Sprintf("err: graph is undirected: %v", e.g)
+}
+
+func (e *UndirectedGraphErr) Is(target error) bool {
+	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // TopologicalSort performs a variation on a depth-first search to order a
