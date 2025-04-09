@@ -26,10 +26,7 @@ func (g *Graph) Neighborhood(v interface{}, order uint, minimumDistance uint, d 
 	_ = queue.Enqueue(v)
 	distances[v] = 0
 
-	for {
-		if queue.Len() == 0 {
-			break
-		}
+	for queue.Len() != 0 {
 
 		current := queue.Dequeue()
 		distance := distances[current]
