@@ -21,82 +21,82 @@ const (
 	Inbound
 )
 
-type set map[interface{}]bool
-type edgeMap map[interface{}]float64
-type adjacencyMap map[interface{}]struct{ Explicit, Implicit edgeMap }
+type set[V comparable] map[V]bool
+type edgeMap[V comparable] map[V]float64
+type adjacencyMap[V comparable] map[V]struct{ Explicit, Implicit edgeMap[V] }
 
 // A MissingVertexErr describes a vertex that does not exist in a Graph.
-type MissingVertexErr struct {
-	v interface{}
+type MissingVertexErr[V comparable] struct {
+	v V
 }
 
-func (e *MissingVertexErr) Error() string {
+func (e *MissingVertexErr[V]) Error() string {
 	return "err: missing vertex: " + reflect.ValueOf(e.v).String()
 }
 
-func (e *MissingVertexErr) Is(target error) bool {
+func (e *MissingVertexErr[V]) Is(target error) bool {
 	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // A MissingEdgeErr describes an edge (a pair of ordered vertices) that does
 // not exist in a Graph.
-type MissingEdgeErr struct {
-	from, to interface{}
+type MissingEdgeErr[V comparable] struct {
+	from, to V
 }
 
-func (e *MissingEdgeErr) Error() string {
+func (e *MissingEdgeErr[V]) Error() string {
 	return "err: missing edge (" + reflect.ValueOf(e.from).String() + " - " + reflect.ValueOf(e.to).String() + ")"
 }
 
-func (e *MissingEdgeErr) Is(target error) bool {
+func (e *MissingEdgeErr[V]) Is(target error) bool {
 	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // A DuplicateVertexErr describes a vertex that already exists in a Graph.
-type DuplicateVertexErr struct {
-	v interface{}
+type DuplicateVertexErr[V comparable] struct {
+	v V
 }
 
-func (e *DuplicateVertexErr) Error() string {
+func (e *DuplicateVertexErr[V]) Error() string {
 	return "err: duplicate vertex: " + reflect.ValueOf(e.v).String()
 }
 
-func (e *DuplicateVertexErr) Is(target error) bool {
+func (e *DuplicateVertexErr[V]) Is(target error) bool {
 	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // A DuplicateEdgeErr describes an edge (a pair of ordered vertices) that
 // already exist in a Graph.
-type DuplicateEdgeErr struct {
-	from, to interface{}
+type DuplicateEdgeErr[V comparable] struct {
+	from, to V
 }
 
-func (e *DuplicateEdgeErr) Error() string {
+func (e *DuplicateEdgeErr[V]) Error() string {
 	return "err: duplicate edge (" + reflect.ValueOf(e.from).String() + " - " + reflect.ValueOf(e.to).String() + ")"
 }
 
-func (e *DuplicateEdgeErr) Is(target error) bool {
+func (e *DuplicateEdgeErr[V]) Is(target error) bool {
 	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // A Graph is an unordered set of nodes along with a set of weighted ordered-pair
 // relationships between nodes.
-type Graph struct {
+type Graph[V comparable] struct {
 	isDirected   bool
-	vertices     set
-	adjacencyMap adjacencyMap
+	vertices     set[V]
+	adjacencyMap adjacencyMap[V]
 }
 
 // NewGraph creates a new Graph, enforcing directed edges if isDirected is true.
-func NewGraph(isDirected bool) Graph {
-	return Graph{
+func NewGraph[V comparable](isDirected bool) Graph[V] {
+	return Graph[V]{
 		isDirected:   isDirected,
-		vertices:     make(set),
-		adjacencyMap: make(adjacencyMap),
+		vertices:     make(set[V]),
+		adjacencyMap: make(adjacencyMap[V]),
 	}
 }
 
-func (g Graph) String() string {
+func (g Graph[V]) String() string {
 	out := "{ "
 	for a, e := range g.adjacencyMap {
 		for b := range e.Explicit {
@@ -108,15 +108,15 @@ func (g Graph) String() string {
 
 // AddVertex adds v to g. If the graph already contains vertex v, it returns
 // DuplicateVertexErr.
-func (g *Graph) AddVertex(v interface{}) error {
+func (g *Graph[V]) AddVertex(v V) error {
 	if _, ok := g.vertices[v]; ok {
-		return &DuplicateVertexErr{v}
+		return &DuplicateVertexErr[V]{v}
 	}
 
 	g.vertices[v] = true
-	g.adjacencyMap[v] = struct{ Explicit, Implicit edgeMap }{
-		Explicit: make(edgeMap),
-		Implicit: make(edgeMap),
+	g.adjacencyMap[v] = struct{ Explicit, Implicit edgeMap[V] }{
+		Explicit: make(edgeMap[V]),
+		Implicit: make(edgeMap[V]),
 	}
 
 	return nil
@@ -124,7 +124,7 @@ func (g *Graph) AddVertex(v interface{}) error {
 
 // AddVertices adds vertices v to g. If the graph already contains a vertex, it
 // returns DuplicateVertexErr.
-func (g *Graph) AddVertices(v ...interface{}) error {
+func (g *Graph[V]) AddVertices(v ...V) error {
 	for _, vertex := range v {
 		if err := g.AddVertex(vertex); err != nil {
 			return err
@@ -136,9 +136,9 @@ func (g *Graph) AddVertices(v ...interface{}) error {
 
 // RemoveVertex removes v from g. If the graph does not contain vertex v, it
 // returns MissingVertexErr.
-func (g *Graph) RemoveVertex(v interface{}) error {
+func (g *Graph[V]) RemoveVertex(v V) error {
 	if _, ok := g.vertices[v]; !ok {
-		return &MissingVertexErr{v}
+		return &MissingVertexErr[V]{v}
 	}
 
 	for n := range g.adjacencyMap[v].Explicit {
@@ -159,7 +159,7 @@ func (g *Graph) RemoveVertex(v interface{}) error {
 // they are not already present. If the graph is an undirected graph, the inverse
 // edge from b to a is also added. If the edge relationship already exists, a
 // DuplicateEdgeErr is returned.
-func (g *Graph) AddEdge(a, b interface{}, weight float64) error {
+func (g *Graph[V]) AddEdge(a, b V, weight float64) error {
 	if _, ok := g.vertices[a]; !ok {
 		if err := g.AddVertex(a); err != nil {
 			return err
@@ -191,10 +191,10 @@ func (g *Graph) AddEdge(a, b interface{}, weight float64) error {
 	return nil
 }
 
-func (g *Graph) addExplicitEdge(a, b interface{}, weight float64) error {
+func (g *Graph[V]) addExplicitEdge(a, b V, weight float64) error {
 	edges := g.adjacencyMap[a]
 	if _, ok := edges.Explicit[b]; ok {
-		return &DuplicateEdgeErr{a, b}
+		return &DuplicateEdgeErr[V]{a, b}
 	}
 	edges.Explicit[b] = weight
 	g.adjacencyMap[a] = edges
@@ -202,10 +202,10 @@ func (g *Graph) addExplicitEdge(a, b interface{}, weight float64) error {
 	return nil
 }
 
-func (g *Graph) addImplicitEdge(a, b interface{}, weight float64) error {
+func (g *Graph[V]) addImplicitEdge(a, b V, weight float64) error {
 	edges := g.adjacencyMap[a]
 	if _, ok := edges.Implicit[b]; ok {
-		return &DuplicateEdgeErr{a, b}
+		return &DuplicateEdgeErr[V]{a, b}
 	}
 	edges.Implicit[b] = weight
 	g.adjacencyMap[a] = edges
@@ -217,13 +217,13 @@ func (g *Graph) addImplicitEdge(a, b interface{}, weight float64) error {
 // it returns MissingVertexErr. If the graph is an undirected graph, the inverse
 // edge from b to a is also removed. If the edge does not exist, it returns
 // MissingEdgeErr.
-func (g *Graph) RemoveEdge(a, b interface{}) error {
+func (g *Graph[V]) RemoveEdge(a, b V) error {
 	if _, ok := g.vertices[a]; !ok {
-		return &MissingVertexErr{a}
+		return &MissingVertexErr[V]{a}
 	}
 
 	if _, ok := g.vertices[b]; !ok {
-		return &MissingVertexErr{b}
+		return &MissingVertexErr[V]{b}
 	}
 
 	if err := g.removeExplicitEdge(a, b); err != nil {
@@ -243,10 +243,10 @@ func (g *Graph) RemoveEdge(a, b interface{}) error {
 	return nil
 }
 
-func (g *Graph) removeExplicitEdge(a, b interface{}) error {
+func (g *Graph[V]) removeExplicitEdge(a, b V) error {
 	edges := g.adjacencyMap[a]
 	if _, ok := edges.Explicit[b]; !ok {
-		return &MissingEdgeErr{a, b}
+		return &MissingEdgeErr[V]{a, b}
 	}
 	delete(edges.Explicit, b)
 	g.adjacencyMap[a] = edges
@@ -254,10 +254,10 @@ func (g *Graph) removeExplicitEdge(a, b interface{}) error {
 	return nil
 }
 
-func (g *Graph) removeImplicitEdge(a, b interface{}) error {
+func (g *Graph[V]) removeImplicitEdge(a, b V) error {
 	edges := g.adjacencyMap[a]
 	if _, ok := edges.Implicit[b]; !ok {
-		return &MissingEdgeErr{a, b}
+		return &MissingEdgeErr[V]{a, b}
 	}
 	delete(edges.Implicit, b)
 	g.adjacencyMap[a] = edges
@@ -266,19 +266,19 @@ func (g *Graph) removeImplicitEdge(a, b interface{}) error {
 }
 
 // NumVertex returns the number of vertices in the graph.
-func (g Graph) NumVertex() int {
+func (g Graph[V]) NumVertex() int {
 	return len(g.vertices)
 }
 
 // Neighbors returns a slice of vertices adjacent to v, given direction d. If
 // the graph is undirected, d is ignored. If the graph does not contain vertex
 // v, it returns MissingVertexErr.
-func (g Graph) Neighbors(v interface{}, d Direction) ([]interface{}, error) {
+func (g Graph[V]) Neighbors(v V, d Direction) ([]V, error) {
 	if _, ok := g.vertices[v]; !ok {
-		return nil, &MissingVertexErr{v}
+		return nil, &MissingVertexErr[V]{v}
 	}
 
-	var neighbors edgeMap
+	var neighbors edgeMap[V]
 	if g.isDirected {
 		// In a directed graph, the neighbors of a vertex v are the set of
 		// vertices:
@@ -303,7 +303,7 @@ func (g Graph) Neighbors(v interface{}, d Direction) ([]interface{}, error) {
 		neighbors = g.adjacencyMap[v].Explicit
 	}
 
-	vertices := make([]interface{}, 0, len(neighbors))
+	vertices := make([]V, 0, len(neighbors))
 	for vertex := range neighbors {
 		vertices = append(vertices, vertex)
 	}

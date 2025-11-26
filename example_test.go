@@ -31,7 +31,7 @@ func ExampleGraph() {
 		Revision: 2,
 	}
 
-	deps := graph.NewGraph(true)
+	deps := graph.NewGraph[Package](true)
 	if err := deps.AddEdge(foo, libfoo, 0); err != nil {
 		log.Fatal(err)
 	}

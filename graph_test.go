@@ -8,48 +8,48 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
-func UtilityGraph() Graph {
-	return Graph{
-		vertices: set{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true},
-		adjacencyMap: adjacencyMap{
+func UtilityGraph() Graph[string] {
+	return Graph[string]{
+		vertices: set[string]{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true},
+		adjacencyMap: adjacencyMap[string]{
 			"a": struct {
-				Explicit edgeMap
-				Implicit edgeMap
+					Explicit edgeMap[string]
+					Implicit edgeMap[string]
 			}{
-				Explicit: edgeMap{"x": 0, "y": 0, "z": 0},
-				Implicit: edgeMap{},
+				Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0},
+				Implicit: edgeMap[string]{},
 			},
 			"b": struct {
-				Explicit edgeMap
-				Implicit edgeMap
+					Explicit edgeMap[string]
+					Implicit edgeMap[string]
 			}{
-				Explicit: edgeMap{"x": 0, "y": 0, "z": 0},
-				Implicit: edgeMap{},
+				Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0},
+				Implicit: edgeMap[string]{},
 			},
 			"c": struct {
-				Explicit edgeMap
-				Implicit edgeMap
+					Explicit edgeMap[string]
+					Implicit edgeMap[string]
 			}{
-				Explicit: edgeMap{"x": 0, "y": 0, "z": 0},
-				Implicit: edgeMap{},
+				Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0},
+				Implicit: edgeMap[string]{},
 			},
 			"x": struct {
-				Explicit edgeMap
-				Implicit edgeMap
+					Explicit edgeMap[string]
+					Implicit edgeMap[string]
 			}{
-				Explicit: edgeMap{"a": 0, "b": 0, "c": 0},
+				Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0},
 			},
 			"y": struct {
-				Explicit edgeMap
-				Implicit edgeMap
+					Explicit edgeMap[string]
+					Implicit edgeMap[string]
 			}{
-				Explicit: edgeMap{"a": 0, "b": 0, "c": 0},
+				Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0},
 			},
 			"z": struct {
-				Explicit edgeMap
-				Implicit edgeMap
+					Explicit edgeMap[string]
+					Implicit edgeMap[string]
 			}{
-				Explicit: edgeMap{"a": 0, "b": 0, "c": 0},
+				Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0},
 			},
 		},
 	}
@@ -58,38 +58,38 @@ func UtilityGraph() Graph {
 func TestAddVertex(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
+		graph       Graph[string]
 		input       string
-		want        Graph
+		want        Graph[string]
 		wantError   error
 	}{
 		{
-			graph: Graph{
-				vertices:     set{},
-				adjacencyMap: adjacencyMap{},
+			graph: Graph[string]{
+				vertices:     set[string]{},
+				adjacencyMap: adjacencyMap[string]{},
 			},
 			input: "a",
-			want: Graph{
-				vertices: set{
+			want: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 				},
-				adjacencyMap: adjacencyMap{},
+				adjacencyMap: adjacencyMap[string]{},
 			},
 			input:     "a",
-			wantError: &DuplicateVertexErr{"a"},
+			wantError: &DuplicateVertexErr[string]{"a"},
 		},
 	}
 
@@ -105,7 +105,7 @@ func TestAddVertex(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph[string]{})) {
 					t.Errorf("%+v != %+v", test.graph, test.want)
 				}
 			}
@@ -116,55 +116,55 @@ func TestAddVertex(t *testing.T) {
 func TestRemoveVertex(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
+		graph       Graph[string]
 		input       string
-		want        Graph
+		want        Graph[string]
 		wantError   error
 	}{
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input: "a",
-			want: Graph{
-				vertices: set{
+			want: Graph[string]{
+				vertices: set[string]{
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input:     "a",
-			wantError: &MissingVertexErr{"a"},
+			wantError: &MissingVertexErr[string]{"a"},
 		},
 	}
 
@@ -180,7 +180,7 @@ func TestRemoveVertex(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph[string]{})) {
 					t.Errorf("%+v != %+v", test.graph, test.want)
 				}
 			}
@@ -191,48 +191,48 @@ func TestRemoveVertex(t *testing.T) {
 func TestAddVertices(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
-		input       []interface{}
-		want        Graph
+		graph       Graph[string]
+		input       []string
+		want        Graph[string]
 		wantError   error
 	}{
 		{
-			graph: Graph{
-				vertices:     set{},
-				adjacencyMap: adjacencyMap{},
+			graph: Graph[string]{
+				vertices:     set[string]{},
+				adjacencyMap: adjacencyMap[string]{},
 			},
-			input: []interface{}{"a", "b"},
-			want: Graph{
-				vertices: set{
+			input: []string{"a", "b"},
+			want: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
-			input:     []interface{}{"a"},
-			wantError: &DuplicateVertexErr{"a"},
+			input:     []string{"a"},
+			wantError: &DuplicateVertexErr[string]{"a"},
 		},
 	}
 
@@ -248,7 +248,7 @@ func TestAddVertices(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph[string]{})) {
 					t.Errorf("%+v != %+v", test.graph, test.want)
 				}
 			}
@@ -259,73 +259,73 @@ func TestAddVertices(t *testing.T) {
 func TestAddEdge(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
+		graph       Graph[string]
 		input       struct{ a, b string }
-		want        Graph
+		want        Graph[string]
 		wantError   error
 	}{
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input: struct{ a, b string }{"a", "b"},
-			want: Graph{
-				vertices: set{
+			want: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input:     struct{ a, b string }{"a", "b"},
-			wantError: &DuplicateEdgeErr{"a", "b"},
+			wantError: &DuplicateEdgeErr[string]{"a", "b"},
 		},
 	}
 
@@ -341,7 +341,7 @@ func TestAddEdge(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph[string]{})) {
 					t.Errorf("%+v != %+v", test.graph, test.want)
 				}
 			}
@@ -352,162 +352,162 @@ func TestAddEdge(t *testing.T) {
 func TestRemoveEdge(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
+		graph       Graph[string]
 		input       struct{ a, b string }
-		want        Graph
+		want        Graph[string]
 		wantError   error
 	}{
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 					"c": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 							"c": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"c": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input: struct{ a, b string }{"a", "b"},
-			want: Graph{
-				vertices: set{
+			want: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 					"c": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"c": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"c": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 					"c": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 							"c": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"c": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input:     struct{ a, b string }{"d", "b"},
-			wantError: &MissingVertexErr{"d"},
+			wantError: &MissingVertexErr[string]{"d"},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 					"c": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 							"c": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"c": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input:     struct{ a, b string }{"b", "d"},
-			wantError: &MissingVertexErr{"d"},
+			wantError: &MissingVertexErr[string]{"d"},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 					"c": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 							"c": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"c": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input:     struct{ a, b string }{"a", "c"},
-			wantError: &MissingEdgeErr{"a", "c"},
+			wantError: &MissingEdgeErr[string]{"a", "c"},
 		},
 	}
 
@@ -523,7 +523,7 @@ func TestRemoveEdge(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph{})) {
+				if !cmp.Equal(test.graph, test.want, cmp.AllowUnexported(Graph[string]{})) {
 					t.Errorf("%+v != %+v", test.graph, test.want)
 				}
 			}
@@ -534,57 +534,57 @@ func TestRemoveEdge(t *testing.T) {
 func TestNeighbors(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
+		graph       Graph[string]
 		input       string
-		want        []interface{}
+		want        []string
 		wantError   error
 	}{
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 					"b": true,
 					"c": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"b": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"a": 0,
 							"c": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
-					"c": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{
 							"b": 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input: "b",
-			want:  []interface{}{"a", "c"},
+			want:  []string{"a", "c"},
 		},
 		{
-			graph: Graph{
-				vertices: set{
+			graph: Graph[string]{
+				vertices: set[string]{
 					"a": true,
 				},
-				adjacencyMap: adjacencyMap{
-					"a": struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
 					},
 				},
 			},
 			input:     "b",
-			wantError: &MissingVertexErr{"b"},
+			wantError: &MissingVertexErr[string]{"b"},
 		},
 	}
 
@@ -600,7 +600,7 @@ func TestNeighbors(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{}), cmpopts.SortSlices(func(x, y interface{}) bool {
+				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph[string]{}), cmpopts.SortSlices(func(x, y string) bool {
 					return fmt.Sprintf("%v", x) < fmt.Sprintf("%v", y)
 				})) {
 					t.Errorf("%+v != %+v", got, test.want)

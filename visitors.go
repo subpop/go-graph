@@ -7,13 +7,13 @@ import (
 // DepthFirstSearch performs a depth-first traversal of the graph, starting with
 // vertex v. It returns a slice of vertices visited during the traversal in
 // lexicographic order.
-func (g *Graph) DepthFirstSearch(v interface{}, d Direction) ([]interface{}, error) {
+func (g *Graph[V]) DepthFirstSearch(v V, d Direction) ([]V, error) {
 	if _, ok := g.vertices[v]; !ok {
-		return nil, &MissingVertexErr{v}
+		return nil, &MissingVertexErr[V]{v}
 	}
-	visited := make(map[interface{}]bool)
-	result := make([]interface{}, 0)
-	err := g.visit(v, visited, d, func(v interface{}) (stop bool) {
+	visited := make(map[V]bool)
+	result := make([]V, 0)
+	err := g.visit(v, visited, d, func(v V) (stop bool) {
 		result = append(result, v)
 		return
 	})
@@ -25,18 +25,18 @@ func (g *Graph) DepthFirstSearch(v interface{}, d Direction) ([]interface{}, err
 
 // DepthFirstVisit performs a depth-first traversal of the graph, starting with
 // vertex v. The visitorFunc is invoked each time a vertex is visited.
-func (g *Graph) DepthFirstVisit(v interface{}, d Direction, visitorFunc func(v interface{}) (stop bool)) error {
+func (g *Graph[V]) DepthFirstVisit(v V, d Direction, visitorFunc func(v V) (stop bool)) error {
 	if _, ok := g.vertices[v]; !ok {
-		return &MissingVertexErr{v}
+		return &MissingVertexErr[V]{v}
 	}
-	visited := make(map[interface{}]bool)
+	visited := make(map[V]bool)
 	if err := g.visit(v, visited, d, visitorFunc); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (g *Graph) visit(v interface{}, visited map[interface{}]bool, d Direction, visitorFunc func(v interface{}) (stop bool)) error {
+func (g *Graph[V]) visit(v V, visited map[V]bool, d Direction, visitorFunc func(v V) (stop bool)) error {
 	if stop := visitorFunc(v); stop {
 		return nil
 	}
@@ -58,12 +58,12 @@ func (g *Graph) visit(v interface{}, visited map[interface{}]bool, d Direction, 
 
 // BreadthFirstSearch performs a breadth-first traversal of the graph, starting
 // with vertex v. It returns a slice of vertices visited during the traversal.
-func (g *Graph) BreadthFirstSearch(v interface{}, d Direction) ([]interface{}, error) {
+func (g *Graph[V]) BreadthFirstSearch(v V, d Direction) ([]V, error) {
 	if _, ok := g.vertices[v]; !ok {
-		return nil, &MissingVertexErr{v}
+		return nil, &MissingVertexErr[V]{v}
 	}
-	result := make([]interface{}, 0)
-	err := g.BreadthFirstVisit(v, d, func(v interface{}) (stop bool) {
+	result := make([]V, 0)
+	err := g.BreadthFirstVisit(v, d, func(v V) (stop bool) {
 		result = append(result, v)
 		return
 	})
@@ -75,19 +75,19 @@ func (g *Graph) BreadthFirstSearch(v interface{}, d Direction) ([]interface{}, e
 
 // BreadthFirstVisit performs a breadth-first traversal of the graph, starting
 // with vertex v. The visitorFunc is invoked each time a vertex is visited.
-func (g *Graph) BreadthFirstVisit(v interface{}, d Direction, visitorFunc func(v interface{}) (stop bool)) error {
+func (g *Graph[V]) BreadthFirstVisit(v V, d Direction, visitorFunc func(v V) (stop bool)) error {
 	if _, ok := g.vertices[v]; !ok {
-		return &MissingVertexErr{v}
+		return &MissingVertexErr[V]{v}
 	}
-	var q adt.Queue
-	visited := make(map[interface{}]bool)
+	var q adt.Queue[V]
+	visited := make(map[V]bool)
 	visited[v] = true
 	q.Enqueue(v)
 	for v := q.Dequeue(); v != nil; v = q.Dequeue() {
-		if stop := visitorFunc(v); stop {
+		if stop := visitorFunc(*v); stop {
 			return nil
 		}
-		neighbors, err := g.Neighbors(v, d)
+		neighbors, err := g.Neighbors(*v, d)
 		if err != nil {
 			return err
 		}

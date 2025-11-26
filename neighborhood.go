@@ -13,14 +13,14 @@ import (
 // collecting.
 // If the graph is undirected, d is ignored. If the graph does not contain
 // vertex v, it returns MissingVertexErr.
-func (g *Graph) Neighborhood(v interface{}, order uint, minimumDistance uint, d Direction) ([]interface{}, error) {
+func (g *Graph[V]) Neighborhood(v V, order uint, minimumDistance uint, d Direction) ([]V, error) {
 	if order < minimumDistance {
 		return nil, InvalidArgumentErr{fmt.Sprintf("%v !< %v", order, minimumDistance), "order must be greater than or equal to minimumDistance"}
 	}
 
-	result := make(set)
-	distances := make(map[interface{}]uint)
-	queue := adt.NewQueue()
+	result := make(set[V])
+	distances := make(map[V]uint)
+	queue := adt.NewQueue[V]()
 
 	// insert and mark the initial vertex
 	_ = queue.Enqueue(v)
@@ -29,7 +29,7 @@ func (g *Graph) Neighborhood(v interface{}, order uint, minimumDistance uint, d 
 	for queue.Len() != 0 {
 
 		current := queue.Dequeue()
-		distance := distances[current]
+		distance := distances[*current]
 
 		// vertex current is further from the origin than the desired order, so
 		// the vertex can be ignored.
@@ -40,12 +40,12 @@ func (g *Graph) Neighborhood(v interface{}, order uint, minimumDistance uint, d 
 		// vertex current is within the minimumDistance threshold, so the vertex
 		// is included.
 		if distance >= minimumDistance {
-			result[current] = true
+			result[*current] = true
 		}
 
 		// enqueue the neighbors of the current vertex and record their
 		// distances.
-		neighbors, err := g.Neighbors(current, d)
+		neighbors, err := g.Neighbors(*current, d)
 		if err != nil {
 			return nil, err
 		}
@@ -58,7 +58,7 @@ func (g *Graph) Neighborhood(v interface{}, order uint, minimumDistance uint, d 
 		}
 	}
 
-	keys := make([]interface{}, 0, len(result))
+	keys := make([]V, 0, len(result))
 	for k := range result {
 		keys = append(keys, k)
 	}

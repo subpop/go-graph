@@ -10,34 +10,34 @@ import (
 func TestConnectedComponent(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
-		input       interface{}
-		want        []interface{}
+		graph       Graph[string]
+		input       string
+		want        []string
 		wantError   error
 	}{
 		{
 			description: "utility graph",
-			graph: Graph{vertices: set{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true}, adjacencyMap: adjacencyMap{"a": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap{}}, "b": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap{}}, "c": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap{}}, "x": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"a": 0, "b": 0, "c": 0}}, "y": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"a": 0, "b": 0, "c": 0}}, "z": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"a": 0, "b": 0, "c": 0}}}},
+			graph: Graph[string]{vertices: set[string]{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true}, adjacencyMap: adjacencyMap[string]{"a": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap[string]{}}, "b": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap[string]{}}, "c": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap[string]{}}, "x": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0}}, "y": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0}}, "z": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0}}}},
 			input: "a",
-			want:  []interface{}{"a", "b", "c", "x", "y", "z"},
+			want:  []string{"a", "b", "c", "x", "y", "z"},
 		},
 	}
 
@@ -53,8 +53,8 @@ func TestConnectedComponent(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y interface{}) bool {
-					return x.(string) < y.(string)
+				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y string) bool {
+					return x < y
 				})) {
 					t.Errorf("%#v != %#v", got, test.want)
 				}
@@ -66,32 +66,32 @@ func TestConnectedComponent(t *testing.T) {
 func TestConnectedComponents(t *testing.T) {
 	tests := []struct {
 		description string
-		input       Graph
-		want        [][]interface{}
+		input       Graph[string]
+		want        [][]string
 		wantError   error
 	}{
 		{
 			description: "utility graph",
-			input: Graph{vertices: set{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true}, adjacencyMap: adjacencyMap{"a": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap{}}, "b": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap{}}, "c": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap{}}, "x": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"a": 0, "b": 0, "c": 0}}, "y": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"a": 0, "b": 0, "c": 0}}, "z": struct {
-				Explicit edgeMap
-				Implicit edgeMap
-			}{Explicit: edgeMap{"a": 0, "b": 0, "c": 0}}}},
-			want: [][]interface{}{{"a", "b", "c", "x", "y", "z"}},
+			input: Graph[string]{vertices: set[string]{"a": true, "b": true, "c": true, "x": true, "y": true, "z": true}, adjacencyMap: adjacencyMap[string]{"a": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap[string]{}}, "b": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap[string]{}}, "c": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"x": 0, "y": 0, "z": 0}, Implicit: edgeMap[string]{}}, "x": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0}}, "y": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0}}, "z": struct {
+				Explicit edgeMap[string]
+				Implicit edgeMap[string]
+			}{Explicit: edgeMap[string]{"a": 0, "b": 0, "c": 0}}}},
+			want: [][]string{{"a", "b", "c", "x", "y", "z"}},
 		},
 	}
 
@@ -107,8 +107,8 @@ func TestConnectedComponents(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y interface{}) bool {
-					return x.(string) > y.(string)
+				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y string) bool {
+					return x > y
 				})) {
 					t.Errorf("%#v != %#v", got, test.want)
 				}

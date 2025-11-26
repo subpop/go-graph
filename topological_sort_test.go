@@ -10,136 +10,136 @@ import (
 func TestTopologicalSort(t *testing.T) {
 	tests := []struct {
 		description string
-		input       Graph
-		want        []interface{}
+		input       Graph[int]
+		want        []int
 		wantError   error
 	}{
 		{
 			description: "linear dependency",
-			input: Graph{
+			input: Graph[int]{
 				isDirected: true,
-				vertices: set{
+				vertices: set[int]{
 					0: true,
 					1: true,
 					2: true,
 					3: true,
 				},
-				adjacencyMap: adjacencyMap{
-					0: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{},
-						Implicit: edgeMap{
+				adjacencyMap: adjacencyMap[int]{
+					0: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{},
+						Implicit: edgeMap[int]{
 							1: 0,
 						},
 					},
-					1: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					1: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{
 							0: 0,
 						},
-						Implicit: edgeMap{
+						Implicit: edgeMap[int]{
 							2: 0,
 						},
 					},
-					2: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					2: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{
 							1: 0,
 						},
-						Implicit: edgeMap{
+						Implicit: edgeMap[int]{
 							3: 0,
 						},
 					},
-					3: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					3: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{
 							2: 0,
 						},
-						Implicit: edgeMap{},
+						Implicit: edgeMap[int]{},
 					},
 				},
 			},
-			want: []interface{}{3, 2, 1, 0},
+			want: []int{3, 2, 1, 0},
 		},
 		{
 			description: "undirected graph",
-			input: Graph{
+			input: Graph[int]{
 				isDirected:   false,
-				vertices:     set{},
-				adjacencyMap: adjacencyMap{},
+				vertices:     set[int]{},
+				adjacencyMap: adjacencyMap[int]{},
 			},
 			want: nil,
-			wantError: &UndirectedGraphErr{
-				g: &Graph{
+			wantError: &UndirectedGraphErr[int]{
+				g: &Graph[int]{
 					isDirected:   false,
-					vertices:     set{},
-					adjacencyMap: adjacencyMap{},
+					vertices:     set[int]{},
+					adjacencyMap: adjacencyMap[int]{},
 				},
 			},
 		},
 		{
 			description: "cycle detected",
-			input: Graph{
+			input: Graph[int]{
 				isDirected: true,
-				vertices: set{
+				vertices: set[int]{
 					1: true,
 					2: true,
 					3: true,
 				},
-				adjacencyMap: adjacencyMap{
-					1: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+				adjacencyMap: adjacencyMap[int]{
+					1: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{
 							2: 0,
 						},
-						Implicit: edgeMap{
+						Implicit: edgeMap[int]{
 							3: 0,
 						},
 					},
-					2: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					2: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{
 							3: 0,
 						},
-						Implicit: edgeMap{
+						Implicit: edgeMap[int]{
 							1: 0,
 						},
 					},
-					3: struct{ Explicit, Implicit edgeMap }{
-						Explicit: edgeMap{
+					3: struct{ Explicit, Implicit edgeMap[int] }{
+						Explicit: edgeMap[int]{
 							1: 0,
 						},
-						Implicit: edgeMap{
+						Implicit: edgeMap[int]{
 							2: 0,
 						},
 					},
 				},
 			},
 			want: nil,
-			wantError: &CycleDetectedErr{
-				g: &Graph{
+			wantError: &CycleDetectedErr[int]{
+				g: &Graph[int]{
 					isDirected: true,
-					vertices: set{
+					vertices: set[int]{
 						1: true,
 						2: true,
 						3: true,
 					},
-					adjacencyMap: adjacencyMap{
-						1: struct{ Explicit, Implicit edgeMap }{
-							Explicit: edgeMap{
+					adjacencyMap: adjacencyMap[int]{
+						1: struct{ Explicit, Implicit edgeMap[int] }{
+							Explicit: edgeMap[int]{
 								2: 0,
 							},
-							Implicit: edgeMap{
+							Implicit: edgeMap[int]{
 								3: 0,
 							},
 						},
-						2: struct{ Explicit, Implicit edgeMap }{
-							Explicit: edgeMap{
+						2: struct{ Explicit, Implicit edgeMap[int] }{
+							Explicit: edgeMap[int]{
 								3: 0,
 							},
-							Implicit: edgeMap{
+							Implicit: edgeMap[int]{
 								1: 0,
 							},
 						},
-						3: struct{ Explicit, Implicit edgeMap }{
-							Explicit: edgeMap{
+						3: struct{ Explicit, Implicit edgeMap[int] }{
+							Explicit: edgeMap[int]{
 								1: 0,
 							},
-							Implicit: edgeMap{
+							Implicit: edgeMap[int]{
 								2: 0,
 							},
 						},
@@ -161,7 +161,7 @@ func TestTopologicalSort(t *testing.T) {
 				if err != nil {
 					t.Fatalf("%v", err)
 				}
-				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{})) {
+				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph[int]{})) {
 					t.Errorf("%+v != %+v", got, test.want)
 				}
 			}

@@ -8,28 +8,28 @@ import (
 )
 
 // A CycleDetectedErr describes a graph that contains a cycle.
-type CycleDetectedErr struct {
-	g *Graph
+type CycleDetectedErr[V comparable] struct {
+	g *Graph[V]
 }
 
-func (e *CycleDetectedErr) Error() string {
+func (e *CycleDetectedErr[V]) Error() string {
 	return fmt.Sprintf("err: cycle detected in graph: %v", e.g)
 }
 
-func (e *CycleDetectedErr) Is(target error) bool {
+func (e *CycleDetectedErr[V]) Is(target error) bool {
 	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
 // An UndirectedGraphErr describes a graph that is undirected.
-type UndirectedGraphErr struct {
-	g *Graph
+type UndirectedGraphErr[V comparable] struct {
+	g *Graph[V]
 }
 
-func (e *UndirectedGraphErr) Error() string {
+func (e *UndirectedGraphErr[V]) Error() string {
 	return fmt.Sprintf("err: graph is undirected: %v", e.g)
 }
 
-func (e *UndirectedGraphErr) Is(target error) bool {
+func (e *UndirectedGraphErr[V]) Is(target error) bool {
 	return reflect.TypeOf(e) == reflect.TypeOf(target)
 }
 
@@ -37,15 +37,15 @@ func (e *UndirectedGraphErr) Is(target error) bool {
 // directed acyclic graph's vertices in such a way that for every vertex, all
 // adjacent vertices appear before it in the list. If graph is undirected, an
 // error is returned. If a cycle is detected, an error is returned.
-func (g *Graph) TopologicalSort() ([]interface{}, error) {
+func (g *Graph[V]) TopologicalSort() ([]V, error) {
 	if !g.isDirected {
-		return nil, &UndirectedGraphErr{g: g}
+		return nil, &UndirectedGraphErr[V]{g: g}
 	}
 
-	var stack adt.Stack
+	var stack adt.Stack[V]
 
-	visited := make(map[interface{}]bool)
-	recStack := make(map[interface{}]bool)
+	visited := make(map[V]bool)
+	recStack := make(map[V]bool)
 
 	for v := range g.vertices {
 		if !visited[v] {
@@ -55,18 +55,18 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 		}
 	}
 
-	sorted := make([]interface{}, 0)
+	sorted := make([]V, 0)
 	for {
 		f := stack.Pop()
 		if f == nil {
 			break
 		}
-		sorted = append(sorted, f)
+		sorted = append(sorted, *f)
 	}
 	return sorted, nil
 }
 
-func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, recStack map[interface{}]bool, stack *adt.Stack) error {
+func (g *Graph[V]) topologicalSort(v V, visited map[V]bool, recStack map[V]bool, stack *adt.Stack[V]) error {
 	visited[v] = true
 	recStack[v] = true
 
@@ -76,7 +76,7 @@ func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, rec
 				return err
 			}
 		} else if recStack[n] {
-			return &CycleDetectedErr{g: g}
+			return &CycleDetectedErr[V]{g: g}
 		}
 	}
 

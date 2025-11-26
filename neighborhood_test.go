@@ -10,20 +10,20 @@ import (
 func TestNeighborhood(t *testing.T) {
 	tests := []struct {
 		description string
-		graph       Graph
+		graph       Graph[string]
 		input       struct {
-			v     interface{}
+			v     string
 			order uint
 			min   uint
 		}
-		want      []interface{}
+		want      []string
 		wantError error
 	}{
 		{
 			description: "utility graph",
 			graph:       UtilityGraph(),
 			input: struct {
-				v     interface{}
+				v     string
 				order uint
 				min   uint
 			}{
@@ -31,29 +31,29 @@ func TestNeighborhood(t *testing.T) {
 				order: 1,
 				min:   1,
 			},
-			want: []interface{}{"x", "y", "z"},
+			want: []string{"x", "y", "z"},
 		},
 		{
 			description: "disconnected",
-			graph: Graph{
-				vertices: set{"a": true, "b": true, "c": true},
-				adjacencyMap: adjacencyMap{
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
 					"a": struct {
-						Explicit edgeMap
-						Implicit edgeMap
+						Explicit edgeMap[string]
+						Implicit edgeMap[string]
 					}{},
 					"b": struct {
-						Explicit edgeMap
-						Implicit edgeMap
+						Explicit edgeMap[string]
+						Implicit edgeMap[string]
 					}{},
 					"c": struct {
-						Explicit edgeMap
-						Implicit edgeMap
+						Explicit edgeMap[string]
+						Implicit edgeMap[string]
 					}{},
 				},
 			},
 			input: struct {
-				v     interface{}
+				v     string
 				order uint
 				min   uint
 			}{
@@ -61,7 +61,7 @@ func TestNeighborhood(t *testing.T) {
 				order: 1,
 				min:   1,
 			},
-			want: []interface{}{},
+			want: []string{},
 		},
 	}
 
@@ -77,7 +77,7 @@ func TestNeighborhood(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y int) bool { return x > y })) {
+				if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y string) bool { return x > y })) {
 					t.Errorf("%v", cmp.Diff(got, test.want))
 				}
 			}
