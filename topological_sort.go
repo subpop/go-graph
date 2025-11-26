@@ -42,16 +42,17 @@ func (g *Graph[V]) TopologicalSort() ([]V, error) {
 		return nil, &UndirectedGraphErr[V]{g: g}
 	}
 
+	if g.HasCycle() {
+		return nil, &CycleDetectedErr[V]{g: g}
+	}
+
 	var stack adt.Stack[V]
 
 	visited := make(map[V]bool)
-	recStack := make(map[V]bool)
 
 	for v := range g.vertices {
 		if !visited[v] {
-			if err := g.topologicalSort(v, visited, recStack, &stack); err != nil {
-				return nil, err
-			}
+			g.topologicalSort(v, visited, &stack)
 		}
 	}
 
@@ -66,22 +67,14 @@ func (g *Graph[V]) TopologicalSort() ([]V, error) {
 	return sorted, nil
 }
 
-func (g *Graph[V]) topologicalSort(v V, visited map[V]bool, recStack map[V]bool, stack *adt.Stack[V]) error {
+func (g *Graph[V]) topologicalSort(v V, visited map[V]bool, stack *adt.Stack[V]) {
 	visited[v] = true
-	recStack[v] = true
 
 	for n := range g.adjacencyMap[v].Explicit {
 		if !visited[n] {
-			if err := g.topologicalSort(n, visited, recStack, stack); err != nil {
-				return err
-			}
-		} else if recStack[n] {
-			return &CycleDetectedErr[V]{g: g}
+			g.topologicalSort(n, visited, stack)
 		}
 	}
 
-	recStack[v] = false
 	stack.Push(v)
-
-	return nil
 }

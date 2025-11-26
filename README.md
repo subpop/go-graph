@@ -11,6 +11,7 @@ Another graph package in Go.
 - Directed and undirected graphs
 - Weighted edges
 - Add/remove vertices and edges
+- Cycle detection
 
 ### Shortest Path Algorithms
 - Dijkstra (non-negative weights)
