@@ -10,3 +10,10 @@ type InvalidArgumentErr struct {
 func (e InvalidArgumentErr) Error() string {
 	return "invalid argument: " + e.arg + " (" + e.reason + ")"
 }
+
+// DirectedGraphErr describes an operation that is not supported on directed graphs.
+type DirectedGraphErr struct{}
+
+func (e DirectedGraphErr) Error() string {
+	return "err: operation not supported on directed graphs"
+}
