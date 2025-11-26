@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -599,7 +600,9 @@ func TestNeighbors(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{}), cmpopts.SortSlices(func(x, y int) bool { return x < y })) {
+				if !cmp.Equal(got, test.want, cmp.AllowUnexported(Graph{}), cmpopts.SortSlices(func(x, y interface{}) bool {
+					return fmt.Sprintf("%v", x) < fmt.Sprintf("%v", y)
+				})) {
 					t.Errorf("%+v != %+v", got, test.want)
 				}
 			}
