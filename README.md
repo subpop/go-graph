@@ -4,5 +4,31 @@
 
 Another graph package in Go.
 
-This is really just an experiment in API design. But it's always fun to write
-a graphing library.
+## Features
+
+### Graph Construction
+- Generic type support for vertex types
+- Directed and undirected graphs
+- Weighted edges
+- Add/remove vertices and edges
+
+### Shortest Path Algorithms
+- Dijkstra (non-negative weights)
+- Bellman-Ford (handles negative weights, detects negative cycles)
+- Floyd-Warshall (all-pairs shortest paths)
+- A* (heuristic-based pathfinding)
+- BFS shortest path (unweighted graphs)
+
+### Minimum Spanning Trees
+- Kruskal's algorithm
+- Prim's algorithm
+
+### Graph Algorithms
+- Topological sort (for DAGs)
+- Connected components detection
+- Neighborhood queries with distance filters
+
+### Graph Traversal
+- Depth-first search (DFS)
+- Breadth-first search (BFS)
+- Visitor pattern support for custom traversal logic
