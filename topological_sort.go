@@ -45,10 +45,13 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 	var stack adt.Stack
 
 	visited := make(map[interface{}]bool)
+	recStack := make(map[interface{}]bool)
 
 	for v := range g.vertices {
-		if err := g.topologicalSort(v, visited, &stack); err != nil {
-			return nil, err
+		if !visited[v] {
+			if err := g.topologicalSort(v, visited, recStack, &stack); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -63,19 +66,21 @@ func (g *Graph) TopologicalSort() ([]interface{}, error) {
 	return sorted, nil
 }
 
-func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, stack *adt.Stack) error {
-	if visited[v] {
-		return &CycleDetectedErr{g: g}
-	}
+func (g *Graph) topologicalSort(v interface{}, visited map[interface{}]bool, recStack map[interface{}]bool, stack *adt.Stack) error {
 	visited[v] = true
+	recStack[v] = true
 
 	for n := range g.adjacencyMap[v].Explicit {
-		if _, ok := visited[n]; !ok {
-			if err := g.topologicalSort(n, visited, stack); err != nil {
+		if !visited[n] {
+			if err := g.topologicalSort(n, visited, recStack, stack); err != nil {
 				return err
 			}
+		} else if recStack[n] {
+			return &CycleDetectedErr{g: g}
 		}
 	}
+
+	recStack[v] = false
 	stack.Push(v)
 
 	return nil
