@@ -609,3 +609,788 @@ func TestNeighbors(t *testing.T) {
 		})
 	}
 }
+
+func TestHasVertex(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		input       string
+		want        bool
+	}{
+		{
+			description: "vertex exists",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input: "a",
+			want:  true,
+		},
+		{
+			description: "vertex does not exist",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input: "b",
+			want:  false,
+		},
+		{
+			description: "empty graph",
+			graph: Graph[string]{
+				vertices:     set[string]{},
+				adjacencyMap: adjacencyMap[string]{},
+			},
+			input: "a",
+			want:  false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got := test.graph.HasVertex(test.input)
+			if got != test.want {
+				t.Errorf("got %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
+func TestHasEdge(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		from, to    string
+		want        bool
+	}{
+		{
+			description: "edge exists",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from: "a",
+			to:   "b",
+			want: true,
+		},
+		{
+			description: "edge does not exist",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from: "a",
+			to:   "b",
+			want: false,
+		},
+		{
+			description: "vertex does not exist",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from: "a",
+			to:   "c",
+			want: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got := test.graph.HasEdge(test.from, test.to)
+			if got != test.want {
+				t.Errorf("got %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
+func TestGetEdgeWeight(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		from, to    string
+		want        float64
+		wantError   error
+	}{
+		{
+			description: "edge exists",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 5.5},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from: "a",
+			to:   "b",
+			want: 5.5,
+		},
+		{
+			description: "from vertex missing",
+			graph: Graph[string]{
+				vertices: set[string]{"b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from:      "a",
+			to:        "b",
+			wantError: &MissingVertexErr[string]{"a"},
+		},
+		{
+			description: "to vertex missing",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from:      "a",
+			to:        "b",
+			wantError: &MissingVertexErr[string]{"b"},
+		},
+		{
+			description: "edge does not exist",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			from:      "a",
+			to:        "b",
+			wantError: &MissingEdgeErr[string]{"a", "b"},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got, err := test.graph.GetEdgeWeight(test.from, test.to)
+
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("error: got %v, want %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if got != test.want {
+					t.Errorf("got %v, want %v", got, test.want)
+				}
+			}
+		})
+	}
+}
+
+func TestGetAllVertices(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		want        []string
+	}{
+		{
+			description: "multiple vertices",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			want: []string{"a", "b", "c"},
+		},
+		{
+			description: "empty graph",
+			graph: Graph[string]{
+				vertices:     set[string]{},
+				adjacencyMap: adjacencyMap[string]{},
+			},
+			want: []string{},
+		},
+		{
+			description: "single vertex",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			want: []string{"a"},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got := test.graph.GetAllVertices()
+			if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y string) bool {
+				return x < y
+			})) {
+				t.Errorf("got %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
+func TestGetAllEdges(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		want        []struct {
+			From, To string
+			Weight   float64
+		}
+	}{
+		{
+			description: "undirected graph with edges",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0, "c": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"a": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"a": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			want: []struct {
+				From, To string
+				Weight   float64
+			}{
+				{"a", "b", 1.0},
+				{"a", "c", 2.0},
+			},
+		},
+		{
+			description: "directed graph with edges",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"c": 2.0},
+						Implicit: edgeMap[string]{"a": 1.0},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{"b": 2.0},
+					},
+				},
+			},
+			want: []struct {
+				From, To string
+				Weight   float64
+			}{
+				{"a", "b", 1.0},
+				{"b", "c", 2.0},
+			},
+		},
+		{
+			description: "empty graph",
+			graph: Graph[string]{
+				vertices:     set[string]{},
+				adjacencyMap: adjacencyMap[string]{},
+			},
+			want: []struct {
+				From, To string
+				Weight   float64
+			}{},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got := test.graph.GetAllEdges()
+			if !cmp.Equal(got, test.want, cmpopts.SortSlices(func(x, y struct {
+				From, To string
+				Weight   float64
+			}) bool {
+				if x.From != y.From {
+					return x.From < y.From
+				}
+				return x.To < y.To
+			})) {
+				t.Errorf("got %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
+func TestNumEdges(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		want        int
+	}{
+		{
+			description: "undirected graph with edges",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0, "c": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"a": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"a": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			want: 2,
+		},
+		{
+			description: "directed graph with edges",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"c": 2.0},
+						Implicit: edgeMap[string]{"a": 1.0},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{"b": 2.0},
+					},
+				},
+			},
+			want: 2,
+		},
+		{
+			description: "empty graph",
+			graph: Graph[string]{
+				vertices:     set[string]{},
+				adjacencyMap: adjacencyMap[string]{},
+			},
+			want: 0,
+		},
+		{
+			description: "vertices without edges",
+			graph: Graph[string]{
+				vertices: set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			want: 0,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got := test.graph.NumEdges()
+			if got != test.want {
+				t.Errorf("got %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
+func TestDegree(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		input       string
+		want        int
+		wantError   error
+	}{
+		{
+			description: "vertex with multiple edges",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0, "c": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"a": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"a": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input: "a",
+			want:  2,
+		},
+		{
+			description: "isolated vertex",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input: "a",
+			want:  0,
+		},
+		{
+			description: "missing vertex",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input:     "b",
+			wantError: &MissingVertexErr[string]{"b"},
+		},
+		{
+			description: "directed graph",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input:     "a",
+			wantError: DirectedGraphErr{},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got, err := test.graph.Degree(test.input)
+
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("error: got %v, want %v", err, test.wantError)
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if got != test.want {
+					t.Errorf("got %v, want %v", got, test.want)
+				}
+			}
+		})
+	}
+}
+
+func TestInDegree(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		input       string
+		want        int
+		wantError   error
+	}{
+		{
+			description: "vertex with incoming edges",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"c": 2.0},
+						Implicit: edgeMap[string]{"a": 1.0, "c": 3.0},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 3.0},
+						Implicit: edgeMap[string]{"b": 2.0},
+					},
+				},
+			},
+			input: "b",
+			want:  2,
+		},
+		{
+			description: "vertex with no incoming edges",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{"a": 1.0},
+					},
+				},
+			},
+			input: "a",
+			want:  0,
+		},
+		{
+			description: "missing vertex",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input:     "b",
+			wantError: &MissingVertexErr[string]{"b"},
+		},
+		{
+			description: "undirected graph",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input: "a",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got, err := test.graph.InDegree(test.input)
+
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("error: got %v, want %v", err, test.wantError)
+				}
+			} else if test.description == "undirected graph" {
+				// For undirected graph, we expect UndirectedGraphErr
+				if err == nil {
+					t.Error("expected error for undirected graph, got nil")
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if got != test.want {
+					t.Errorf("got %v, want %v", got, test.want)
+				}
+			}
+		})
+	}
+}
+
+func TestOutDegree(t *testing.T) {
+	tests := []struct {
+		description string
+		graph       Graph[string]
+		input       string
+		want        int
+		wantError   error
+	}{
+		{
+			description: "vertex with outgoing edges",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true, "b": true, "c": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0, "c": 2.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{"a": 1.0},
+					},
+					"c": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{"a": 2.0},
+					},
+				},
+			},
+			input: "a",
+			want:  2,
+		},
+		{
+			description: "vertex with no outgoing edges",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true, "b": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{"b": 1.0},
+						Implicit: edgeMap[string]{},
+					},
+					"b": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{"a": 1.0},
+					},
+				},
+			},
+			input: "b",
+			want:  0,
+		},
+		{
+			description: "missing vertex",
+			graph: Graph[string]{
+				isDirected: true,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input:     "b",
+			wantError: &MissingVertexErr[string]{"b"},
+		},
+		{
+			description: "undirected graph",
+			graph: Graph[string]{
+				isDirected: false,
+				vertices:   set[string]{"a": true},
+				adjacencyMap: adjacencyMap[string]{
+					"a": struct{ Explicit, Implicit edgeMap[string] }{
+						Explicit: edgeMap[string]{},
+						Implicit: edgeMap[string]{},
+					},
+				},
+			},
+			input: "a",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			got, err := test.graph.OutDegree(test.input)
+
+			if test.wantError != nil {
+				if !cmp.Equal(err, test.wantError, cmpopts.EquateErrors()) {
+					t.Errorf("error: got %v, want %v", err, test.wantError)
+				}
+			} else if test.description == "undirected graph" {
+				// For undirected graph, we expect UndirectedGraphErr
+				if err == nil {
+					t.Error("expected error for undirected graph, got nil")
+				}
+			} else {
+				if err != nil {
+					t.Fatal(err)
+				}
+				if got != test.want {
+					t.Errorf("got %v, want %v", got, test.want)
+				}
+			}
+		})
+	}
+}

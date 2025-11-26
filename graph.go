@@ -310,3 +310,137 @@ func (g Graph[V]) Neighbors(v V, d Direction) ([]V, error) {
 
 	return vertices, nil
 }
+
+// HasVertex returns true if the graph contains vertex v.
+func (g Graph[V]) HasVertex(v V) bool {
+	_, ok := g.vertices[v]
+	return ok
+}
+
+// HasEdge returns true if the graph contains an edge from a to b.
+func (g Graph[V]) HasEdge(a, b V) bool {
+	if edges, ok := g.adjacencyMap[a]; ok {
+		_, hasEdge := edges.Explicit[b]
+		return hasEdge
+	}
+	return false
+}
+
+// GetEdgeWeight returns the weight of the edge from a to b. If either vertex
+// does not exist, it returns MissingVertexErr. If the edge does not exist, it
+// returns MissingEdgeErr.
+func (g Graph[V]) GetEdgeWeight(a, b V) (float64, error) {
+	if _, ok := g.vertices[a]; !ok {
+		return 0, &MissingVertexErr[V]{a}
+	}
+
+	if _, ok := g.vertices[b]; !ok {
+		return 0, &MissingVertexErr[V]{b}
+	}
+
+	edges := g.adjacencyMap[a]
+	if weight, ok := edges.Explicit[b]; ok {
+		return weight, nil
+	}
+
+	return 0, &MissingEdgeErr[V]{a, b}
+}
+
+// GetAllVertices returns a slice of all vertices in the graph.
+func (g Graph[V]) GetAllVertices() []V {
+	vertices := make([]V, 0, len(g.vertices))
+	for v := range g.vertices {
+		vertices = append(vertices, v)
+	}
+	return vertices
+}
+
+// GetAllEdges returns a slice of all edges in the graph. Each edge is
+// represented as an anonymous struct with From, To, and Weight fields.
+func (g Graph[V]) GetAllEdges() []struct {
+	From, To V
+	Weight   float64
+} {
+	edges := make([]struct {
+		From, To V
+		Weight   float64
+	}, 0)
+
+	for from, edgeMap := range g.adjacencyMap {
+		for to, weight := range edgeMap.Explicit {
+			// In undirected graphs, each edge is stored twice (a->b and b->a).
+			// Only include edges where from <= to to avoid duplicates.
+			if g.isDirected || fmt.Sprintf("%v", from) <= fmt.Sprintf("%v", to) {
+				edges = append(edges, struct {
+					From, To V
+					Weight   float64
+				}{from, to, weight})
+			}
+		}
+	}
+
+	return edges
+}
+
+// NumEdges returns the number of edges in the graph.
+func (g Graph[V]) NumEdges() int {
+	count := 0
+	for _, edgeMap := range g.adjacencyMap {
+		count += len(edgeMap.Explicit)
+	}
+
+	// In undirected graphs, each edge is stored twice (a->b and b->a).
+	if !g.isDirected {
+		count /= 2
+	}
+
+	return count
+}
+
+// Degree returns the degree of vertex v in an undirected graph. The degree is
+// the number of edges connected to the vertex. If the graph is directed, it
+// returns DirectedGraphErr. If the vertex does not exist, it returns
+// MissingVertexErr.
+func (g Graph[V]) Degree(v V) (int, error) {
+	if g.isDirected {
+		return 0, DirectedGraphErr{}
+	}
+
+	if _, ok := g.vertices[v]; !ok {
+		return 0, &MissingVertexErr[V]{v}
+	}
+
+	return len(g.adjacencyMap[v].Explicit), nil
+}
+
+// InDegree returns the in-degree of vertex v in a directed graph. The in-degree
+// is the number of edges coming into the vertex. If the graph is undirected, it
+// returns UndirectedGraphErr. If the vertex does not exist, it returns
+// MissingVertexErr.
+func (g Graph[V]) InDegree(v V) (int, error) {
+	if !g.isDirected {
+		return 0, &UndirectedGraphErr[V]{g: &g}
+	}
+
+	if _, ok := g.vertices[v]; !ok {
+		return 0, &MissingVertexErr[V]{v}
+	}
+
+	return len(g.adjacencyMap[v].Implicit), nil
+}
+
+// OutDegree returns the out-degree of vertex v in a directed graph. The
+// out-degree is the number of edges going out from the vertex. If the graph is
+// undirected, it returns UndirectedGraphErr. If the vertex does not exist, it
+// returns MissingVertexErr.
+func (g Graph[V]) OutDegree(v V) (int, error) {
+	if !g.isDirected {
+		return 0, &UndirectedGraphErr[V]{g: &g}
+	}
+
+	if _, ok := g.vertices[v]; !ok {
+		return 0, &MissingVertexErr[V]{v}
+	}
+
+	return len(g.adjacencyMap[v].Explicit), nil
+}
