@@ -43,13 +43,16 @@ func ExampleGraph() {
 
 func ExampleGraph_Dijkstra() {
 	g := graph.NewGraph[string](true)
-	g.AddEdge("A", "B", 4.0)
-	g.AddEdge("A", "C", 2.0)
-	g.AddEdge("B", "C", 1.0)
-	g.AddEdge("B", "D", 5.0)
-	g.AddEdge("C", "D", 8.0)
-	g.AddEdge("C", "E", 10.0)
-	g.AddEdge("D", "E", 2.0)
+
+	// Discard errors in this example.
+	// Generally, this is not good practice in production code.
+	_ = g.AddEdge("A", "B", 4.0)
+	_ = g.AddEdge("A", "C", 2.0)
+	_ = g.AddEdge("B", "C", 1.0)
+	_ = g.AddEdge("B", "D", 5.0)
+	_ = g.AddEdge("C", "D", 8.0)
+	_ = g.AddEdge("C", "E", 10.0)
+	_ = g.AddEdge("D", "E", 2.0)
 
 	results, err := g.Dijkstra("A")
 	if err != nil {
